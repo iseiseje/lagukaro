@@ -3,20 +3,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg-base: #faf7f2;
+  --bg-base: #f8f4e6;
   --bg-surface: #ffffff;
-  --bg-elevated: #f4efe6;
-  --border-color: #e8e0d2;
-  --border-hover: #d9cfbd;
-  --text-main: #1c1917;
-  --text-muted: #57534e;
-  --text-subtle: #8a857e;
+  --bg-elevated: #f0ead6;
+  --border-color: #e5dcce;
+  --border-hover: #d2c4b0;
+  --text-main: #3e2723;
+  --text-muted: #6d4c41;
+  --text-subtle: #8d6e63;
   --brand-red: #dc2626;
   --brand-red-hover: #b91c1c;
-  --header-bg: rgba(250, 247, 242, 0.95);
-  --header-border: #e8e0d2;
-  --shadow-card: 0 1px 3px rgba(44, 30, 15, 0.05), 0 1px 2px rgba(44, 30, 15, 0.03);
-  --shadow-card-hover: 0 10px 25px -5px rgba(44, 30, 15, 0.08), 0 8px 10px -6px rgba(44, 30, 15, 0.04);
+  --brand-terracotta: #c27a65;
+  --header-bg: rgba(248, 244, 230, 0.95);
+  --header-border: #e5dcce;
+  --shadow-card: 0 1px 3px rgba(62, 39, 35, 0.06), 0 1px 2px rgba(62, 39, 35, 0.04);
+  --shadow-card-hover: 0 10px 25px -5px rgba(62, 39, 35, 0.09), 0 8px 10px -6px rgba(62, 39, 35, 0.05);
 }
 
 .dark {
