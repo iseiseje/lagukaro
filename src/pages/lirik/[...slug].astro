@@ -1,0 +1,13 @@
+---
+import { getAllSongs } from '../../lib/strapi';
+
+export async function getStaticPaths() {
+  const songs = await getAllSongs();
+  return songs.map((song: any) => ({
+    params: { slug: song.slug || song.documentId },
+  }));
+}
+
+const { slug } = Astro.params;
+return Astro.redirect(`/lagu/${slug}`);
+---

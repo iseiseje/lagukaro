@@ -1,0 +1,24 @@
+{
+  "name": "lagukaro.id",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Platform direktori, indeks, dan lirik lagu Karo berbasis Astro dan Tailwind CSS",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.3",
+    "tailwindcss": "^4.3.3"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

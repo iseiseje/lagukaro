@@ -1,0 +1,116 @@
+---
+import '../styles/global.css';
+import PengeretRetFullWidth from '../components/PengeretRetFullWidth.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonicalUrl?: string;
+  type?: 'website' | 'article' | 'music.song';
+}
+
+const { 
+  title, 
+  description = "Pustaka lirik lagu daerah Karo terlengkap, terjemahan bahasa Indonesia, makna, dan chord gitar.",
+  image = "/og-image.jpg",
+  canonicalUrl,
+  type = "website"
+} = Astro.props;
+
+const SITE_URL = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString().replace(/\/$/, '') || 'https://lagukaro.id';
+const resolvedCanonical = canonicalUrl 
+  ? (canonicalUrl.startsWith('http') ? canonicalUrl : `${SITE_URL}${canonicalUrl.startsWith('/') ? '' : '/'}${canonicalUrl}`)
+  : `${SITE_URL}${Astro.url.pathname}`;
+
+const resolvedImage = image.startsWith('http') 
+  ? image 
+  : `${SITE_URL}${image.startsWith('/') ? '' : '/'}${image}`;
+---
+
+<!doctype html>
+<html lang="id" class="dark scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | Gendang Karo</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={resolvedCanonical} />
+
+    <!-- Open Graph / Facebook / WhatsApp (SMO) -->
+    <meta property="og:site_name" content="Gendang Karo" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={resolvedCanonical} />
+    <meta property="og:title" content={`${title} | Gendang Karo`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={resolvedImage} />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- Twitter Card (SMO) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={resolvedCanonical} />
+    <meta name="twitter:title" content={`${title} | Gendang Karo`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedImage} />
+    
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP & ScrollTrigger CDN -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Slot for additional head tags (e.g. JSON-LD Schema) -->
+    <slot name="head" />
+  </head>
+  <body class="bg-[#0b0a0e] text-neutral-100 min-h-screen font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-red-700 selection:text-white overflow-x-hidden">
+    <!-- Top Brand Navbar - Karo Cultural Calm Glassmorphism -->
+    <header class="border-b border-white/10 bg-[#0d0c10]/90 backdrop-blur-xl sticky top-0 z-50 transition-all duration-300">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <a href="/" class="group flex items-center gap-2.5">
+          <div class="w-8 h-8 bg-gradient-to-br from-red-600 to-amber-600 rounded-lg flex items-center justify-center text-white font-extrabold text-sm shadow-[0_0_15px_rgba(185,28,28,0.4)] group-hover:scale-105 transition-transform duration-300 font-['Outfit']">
+            GK
+          </div>
+          <span class="text-xl font-bold tracking-tight text-white uppercase font-['Outfit'] group-hover:text-red-400 transition-colors">
+            GENDANG<span class="text-red-500">KARO</span>
+          </span>
+        </a>
+
+        <nav class="flex items-center space-x-1 sm:space-x-3">
+          <a href="/indeks-lagu" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-neutral-300 hover:text-white hover:bg-white/5 transition-all">
+            Indeks Lagu (A-Z)
+          </a>
+          <a href="/#trending" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-red-700/90 hover:bg-red-600 text-white text-xs font-bold rounded-lg tracking-wide uppercase transition-all shadow-md hover:scale-105">
+            <span>🔥 Trending</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Pengeret-ret Cultural Scroll-Driven Animated Strip (Zero-JS) -->
+      <PengeretRetFullWidth />
+    </header>
+
+    <main class="relative z-10">
+      <slot />
+    </main>
+
+    <footer class="border-t border-white/10 mt-24 py-10 bg-[#08070a] text-center text-xs text-neutral-500 relative z-10">
+      <div class="max-w-6xl mx-auto px-4 space-y-3">
+        <div class="flex items-center justify-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+          <span class="font-['Outfit'] font-bold text-sm tracking-wider uppercase text-neutral-200">GENDANG KARO</span>
+        </div>
+        <p class="text-neutral-400 max-w-md mx-auto leading-relaxed">
+          Pustaka & Arsip Lirik Lagu Daerah Karo Terlengkap dengan Terjemahan Bahasa Indonesia.
+        </p>
+        <p class="text-neutral-600 pt-3">© 2026 Gendang Karo. Ensiklopedia Musik & Lirik Budaya Karo.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+

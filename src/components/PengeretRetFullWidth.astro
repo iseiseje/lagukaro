@@ -1,0 +1,144 @@
+---
+/**
+ * PengeretRetFullWidth.astro
+ * Ornamen Asli Tradisional Karo: Pengeret-ret (Cicak Berkepala Dua)
+ * Replikasi Akurat 1:1 Ilustrasi Dian Bangun (Gerga Ret-ret).
+ * 
+ * Update Desain:
+ * - Ukuran Ramping & Proporsional: Tinggi 26px (sebelumnya 46px), sangat elegan di bawah navbar.
+ * - Latar Belakang Selaras Website: Menggunakan warna gelap (#0d0c10 / glass) senada dengan navbar & tema gelap utama.
+ * - Warna Tradisional Karo Autentik:
+ *   - Belah ketupat tengah: Merah Karo solid (#DC2626).
+ *   - Belah ketupat atas & bawah: Putih solid (#FFFFFF) bergaris batas hitam (#111111).
+ *   - Kepala lancip: Putih solid (#FFFFFF) dengan mata hitam (#111111).
+ *   - Kaki bersiku & 3 cakar: Putih bersih (#F3F4F6) berpadu kontras tinggi di atas latar gelap.
+ * - Animasi Scroll: Menambah ruas ketupat ke kanan saat scroll ke bawah, dan berkurang saat scroll ke atas.
+ */
+---
+
+<div class="pengeret-strip" style="position: relative; width: 100%; height: 26px; background: #0d0c10; border-bottom: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.04); overflow: hidden; pointer-events: none;" aria-hidden="true">
+  
+  <!-- 1. KEPALA KIRI (Fixed di x = 0) -->
+  <div id="pengeretHeadLeft" style="position: absolute; left: 0px; top: 0px; width: 56px; height: 26px; z-index: 20;">
+    <svg width="56" height="26" viewBox="0 0 56 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; overflow: visible;">
+      <!-- Kaki Kiri Atas (Putih kontras di atas latar gelap, 3 cakar) -->
+      <polyline points="44,9.5 53,5 34,2" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="34" y1="2" x2="30" y2="1" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="2" x2="32" y2="4" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="2" x2="35" y2="5" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+
+      <!-- Kaki Kiri Bawah (Putih kontras di atas latar gelap, 3 cakar) -->
+      <polyline points="44,16.5 53,21 34,24" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="34" y1="24" x2="30" y2="25" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="24" x2="32" y2="22" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="24" x2="35" y2="21" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+
+      <!-- Kepala Lancip Kiri Putih -->
+      <polygon points="5,13 44,9.5 56,13 44,16.5" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+
+      <!-- Sepasang Mata Hitam Bulat Kiri -->
+      <circle cx="36" cy="11" r="1.5" fill="#111111" />
+      <circle cx="36" cy="15" r="1.5" fill="#111111" />
+    </svg>
+  </div>
+
+  <!-- 2. BADAN BERTAMBAH / BERKURANG (Pola ketupat saling mengisi Dian Bangun) -->
+  <div id="pengeretBodyTrack" style="position: absolute; left: 56px; top: 0px; height: 26px; width: 0px; overflow: hidden; z-index: 10; will-change: width;">
+    <svg width="2500" height="26" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+      <defs>
+        <!-- Tile Ukuran 24px x 26px: Saling Mengisi Sempurna (Shared Edges) -->
+        <pattern id="karo-pengeret-argyle" width="24" height="26" patternUnits="userSpaceOnUse">
+          <!-- Ketupat Putih Atas (Shared Edges dengan Merah) -->
+          <polygon points="0,9.5 12,6 24,9.5 12,13" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+          <polygon points="24,9.5 36,6 48,9.5 36,13" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+
+          <!-- Ketupat Putih Bawah (Shared Edges dengan Merah) -->
+          <polygon points="0,16.5 12,13 24,16.5 12,20" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+          <polygon points="24,16.5 36,13 48,16.5 36,20" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+
+          <!-- Ketupat Merah Tengah Solid Karo (#DC2626) -->
+          <polygon points="0,13 12,9.5 24,13 12,16.5" fill="#DC2626" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+        </pattern>
+      </defs>
+
+      <!-- Mengisi seluruh track badan tanpa peregangan (Zero-Stretch) -->
+      <rect width="100%" height="100%" fill="url(#karo-pengeret-argyle)" />
+    </svg>
+  </div>
+
+  <!-- 3. KEPALA KANAN (Bergerak mulus di ujung badan yang bertambah) -->
+  <div id="pengeretHeadRight" style="position: absolute; left: 56px; top: 0px; width: 56px; height: 26px; z-index: 20; will-change: left;">
+    <svg width="56" height="26" viewBox="0 0 56 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; overflow: visible;">
+      <!-- Kaki Kanan Atas (Putih kontras di atas latar gelap, 3 cakar) -->
+      <polyline points="12,9.5 3,5 22,2" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="22" y1="2" x2="26" y2="1" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="2" x2="24" y2="4" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="2" x2="21" y2="5" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+
+      <!-- Kaki Kanan Bawah (Putih kontras di atas latar gelap, 3 cakar) -->
+      <polyline points="12,16.5 3,21 22,24" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="22" y1="24" x2="26" y2="25" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="24" x2="24" y2="22" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="24" x2="21" y2="21" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+
+      <!-- Kepala Lancip Kanan Putih -->
+      <polygon points="51,13 12,9.5 0,13 12,16.5" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
+
+      <!-- Sepasang Mata Hitam Bulat Kanan -->
+      <circle cx="20" cy="11" r="1.5" fill="#111111" />
+      <circle cx="20" cy="15" r="1.5" fill="#111111" />
+    </svg>
+  </div>
+
+</div>
+
+<script is:inline>
+  (function() {
+    function initPengeret() {
+      var bodyTrack = document.getElementById('pengeretBodyTrack');
+      var headRight = document.getElementById('pengeretHeadRight');
+      if (!bodyTrack || !headRight) return;
+
+      var ticking = false;
+
+      function update() {
+        var scrollH = document.documentElement.scrollHeight - window.innerHeight;
+        var p = scrollH > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollH)) : 0;
+        
+        // Lebar badan bertambah secara proporsional dari 0px saat scroll = 0 hingga penuh saat di bawah
+        var maxBodyWidth = window.innerWidth - 112;
+        if (maxBodyWidth < 0) maxBodyWidth = 0;
+        
+        var currentBodyW = p * maxBodyWidth;
+        
+        bodyTrack.style.width = currentBodyW + 'px';
+        headRight.style.left = (56 + currentBodyW) + 'px';
+        
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      window.addEventListener('resize', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Inisialisasi awal: 0px saat di paling atas
+      update();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPengeret);
+    } else {
+      initPengeret();
+    }
+  })();
+</script>

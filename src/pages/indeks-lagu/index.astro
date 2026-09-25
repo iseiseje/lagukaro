@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
+
+// Menghasilkan array ['#', 'A', 'B', 'C', ..., 'Z']
+const alphabets = ['#', ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
+
+let allSongs: any[] = [];
+
+try {
+  const res = await fetch(`${STRAPI_URL}/api/lagus?populate=*&pagination[pageSize]=100`);
+  if (res.ok) {
+    const json = await res.json();
+    allSongs = json.data || [];
+  }
+} catch (error) {
+  console.error("Gagal mengambil data lagu di halaman indeks lagu:", error);
+}
+
+// Hitung jumlah lagu per huruf untuk badge
+const songCountByLetter = new Map<string, number>();
+allSongs.forEach((song: any) => {
+  const title = (song.Title || song.title || '').trim().toUpperCase();
+  if (!title) return;
+  const firstChar = title[0];
+  const letterKey = /^[A-Z]/.test(firstChar) ? firstChar : '#';
+  songCountByLetter.set(letterKey, (songCountByLetter.get(letterKey) || 0) + 1);
+});
+---
+
+<Layout title="Indeks Lagu Karo (A-Z) | Gendang Karo">
+  <!-- Container Full Width tanpa batasan max-w -->
+  <div class="w-full min-h-screen px-4 sm:px-6 md:px-12 py-10 space-y-12">
+    
+    <!-- HEADER -->
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <span class="text-xs font-bold tracking-widest text-red-400 uppercase font-['Outfit']">KATALOG PUSTAKA MUSIK</span>
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white uppercase font-['Outfit']">
+        Indeks Lagu Karo (A-Z)
+      </h1>
+      <p class="text-neutral-400 text-sm md:text-base font-medium">
+        Koleksi lengkap arsip lagu daerah Karo disusun menurut abjad judul. Pilih huruf untuk melihat daftar lagu.
+      </p>
+    </div>
+
+    <!-- FULL PAGE MEGA ALPHABET GRID -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-6" id="alphabetGrid">
+      {alphabets.map((letter) => {
+        const count = songCountByLetter.get(letter) || 0;
+        const letterSlug = letter === '#' ? '0-9' : letter.toLowerCase();
+        const hasSongs = count > 0;
+        
+        return (
+          <a
+            href={`/indeks-lagu/${letterSlug}`}
+            class={`relative flex flex-col items-center justify-center aspect-square rounded-3xl transition-all duration-300 font-['Outfit'] border select-none group ${
+              hasSongs
+                ? 'glass-panel text-white hover:border-red-500 hover:bg-[#1c1924] hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(185,28,28,0.35)]'
+                : 'glass-panel text-neutral-400 hover:text-white hover:border-red-600/40 hover:bg-[#181620] hover:-translate-y-1'
+            }`}
+            title={`Lihat daftar lagu huruf ${letter}`}
+          >
+            <span class="text-5xl sm:text-6xl md:text-7xl font-black transition-transform group-hover:scale-105">
+              {letter}
+            </span>
+            {hasSongs ? (
+              <span class="mt-2 px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold bg-gradient-to-r from-red-600 to-amber-700 text-white shadow-sm">
+                {count} {count === 1 ? 'Lagu' : 'Lagu'}
+              </span>
+            ) : (
+              <span class="mt-2 text-[10px] text-neutral-600 font-medium">
+                0 Lagu
+              </span>
+            )}
+          </a>
+        );
+      })}
+    </div>
+
+  </div>
+</Layout>
+
+<!-- Client Script untuk redirect otomatis jika user membuka URL lama ?huruf=X -->
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramLetter = urlParams.get('huruf');
+    if (paramLetter) {
+      const slug = paramLetter.trim() === '#' ? '0-9' : paramLetter.trim().toLowerCase();
+      window.location.replace('/indeks-lagu/' + encodeURIComponent(slug));
+    }
+  });
+</script>

@@ -1,0 +1,163 @@
+---
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
+---
+
+<div class="relative w-full mx-auto group/search text-left" id="search-container">
+  <div class="relative text-left">
+    <input
+      type="text"
+      id="liveSearchInput"
+      placeholder="Cari lirik, judul lagu, atau nama artis Karo..."
+      class="w-full px-5 py-3.5 bg-[#14131a]/90 border border-white/15 rounded-xl text-sm md:text-base text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/30 backdrop-blur-xl transition-all duration-200 shadow-xl font-medium text-left"
+      autocomplete="off"
+    />
+    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 text-base" id="searchIcon">🔍</span>
+    <!-- Loading Spinner -->
+    <svg id="searchSpinner" class="hidden absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500 animate-spin" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+  </div>
+
+  <!-- Dropdown Container (High z-index to avoid clipping, text-left to override parent text-center) -->
+  <div id="searchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-[#131218]/98 border border-white/15 rounded-xl shadow-2xl backdrop-blur-2xl overflow-hidden z-[100] transition-all text-left">
+    <div class="px-4 py-2 bg-white/5 border-b border-white/5 text-[11px] font-bold tracking-wide text-red-400 uppercase font-['Outfit'] flex items-center justify-between text-left">
+      <span>Hasil Pencarian</span>
+      <span class="text-neutral-500 font-sans text-[10px]">Tekan ESC untuk menutup</span>
+    </div>
+    <ul id="searchResults" class="max-h-80 overflow-y-auto divide-y divide-white/5 text-left">
+      <!-- Hasil dirender di sini via JS -->
+    </ul>
+    <div id="searchEmpty" class="hidden p-5 text-center text-sm text-neutral-400">
+      <p class="font-semibold text-neutral-300">Tidak ada lagu ditemukan.</p>
+      <p class="text-xs text-neutral-500 mt-1">Coba kata kunci lain atau nama penyanyi.</p>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ apiUrl: STRAPI_URL }}>
+  const input = document.getElementById('liveSearchInput');
+  const dropdown = document.getElementById('searchDropdown');
+  const resultsContainer = document.getElementById('searchResults');
+  const emptyMessage = document.getElementById('searchEmpty');
+  const spinner = document.getElementById('searchSpinner');
+  const icon = document.getElementById('searchIcon');
+  const container = document.getElementById('search-container');
+
+  let debounceTimer;
+
+  let cachedSongs = null;
+
+  // Helper ekstraksi nama artis (mendukung many-to-many penyanyis)
+  const getArtistNames = (item) => {
+    if (item.penyanyis && Array.isArray(item.penyanyis) && item.penyanyis.length > 0) {
+      return item.penyanyis.map(p => p.name || p.nama).filter(Boolean).join(', ');
+    }
+    if (item.penyanyi && item.penyanyi.name) {
+      return item.penyanyi.name;
+    }
+    if (item.attributes?.penyanyi?.data?.attributes?.name) {
+      return item.attributes.penyanyi.data.attributes.name;
+    }
+    return 'Artis Tidak Diketahui';
+  };
+
+  const fetchSongs = async () => {
+    if (cachedSongs) return cachedSongs;
+    const response = await fetch(`${apiUrl}/api/lagus?populate=*&pagination[pageSize]=100`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    const json = await response.json();
+    cachedSongs = json.data || [];
+    return cachedSongs;
+  };
+
+  const fetchResults = async (query) => {
+    try {
+      icon.classList.add('hidden');
+      spinner.classList.remove('hidden');
+
+      const all = await fetchSongs();
+      const q = query.toLowerCase().trim();
+
+      const matched = all.filter(item => {
+        const title = (item.Title || item.title || item.attributes?.Title || '').toLowerCase();
+        const artist = getArtistNames(item).toLowerCase();
+        return title.includes(q) || artist.includes(q);
+      }).slice(0, 6);
+
+      resultsContainer.innerHTML = '';
+
+      if (matched.length === 0) {
+        emptyMessage.classList.remove('hidden');
+      } else {
+        emptyMessage.classList.add('hidden');
+        matched.forEach(item => {
+          const title = item.Title || item.title || item.attributes?.Title || 'Tanpa Judul';
+          const slug = item.slug || item.attributes?.slug || item.documentId;
+          const artistName = getArtistNames(item);
+
+          const li = document.createElement('li');
+          li.className = 'text-left';
+          li.innerHTML = `
+            <a href="/lagu/${slug}" class="group block px-4 py-3 hover:bg-red-800/80 hover:text-white transition-all duration-150 text-left">
+              <div class="flex items-center justify-between text-left gap-3">
+                <div class="min-w-0 flex-1 text-left">
+                  <div class="font-bold text-white text-sm truncate font-['Outfit'] text-left leading-snug">${title}</div>
+                  <div class="text-xs text-neutral-400 group-hover:text-red-100 mt-0.5 truncate text-left leading-normal">${artistName}</div>
+                </div>
+                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-white/10 group-hover:bg-white/20 text-red-400 group-hover:text-white transition-colors flex-shrink-0">Lirik</span>
+              </div>
+            </a>
+          `;
+          resultsContainer.appendChild(li);
+        });
+      }
+      
+      dropdown.classList.remove('hidden');
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      spinner.classList.add('hidden');
+      icon.classList.remove('hidden');
+    }
+  };
+
+  input.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+
+    clearTimeout(debounceTimer);
+
+    if (query.length < 2) {
+      dropdown.classList.add('hidden');
+      return;
+    }
+
+    debounceTimer = setTimeout(() => {
+      fetchResults(query);
+    }, 300);
+  });
+
+  // Tutup dropdown saat Escape ditekan
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      dropdown.classList.add('hidden');
+      input.blur();
+    }
+  });
+
+  // Tutup dropdown saat klik di luar
+  document.addEventListener('click', (e) => {
+    if (container && !container.contains(e.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+  
+  // Buka kembali jika input diklik dan ada hasil
+  input.addEventListener('click', () => {
+    if (input.value.trim().length >= 2) {
+      dropdown.classList.remove('hidden');
+    }
+  });
+</script>

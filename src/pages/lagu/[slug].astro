@@ -1,0 +1,384 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllSongs, getSongBySlug } from '../../lib/strapi';
+
+export async function getStaticPaths() {
+  const songs = await getAllSongs();
+  return songs.map((song: any) => ({
+    params: { slug: song.slug || song.documentId },
+    props: { song },
+  }));
+}
+
+let { song } = Astro.props;
+const { slug } = Astro.params;
+
+// Fallback fetch jika data belum tersedia di props (mendukung Strapi v5)
+if (!song && slug) {
+  song = await getSongBySlug(slug);
+}
+
+// Normalisasi komponen FAQ dan Facts untuk kompatibilitas skema Strapi v5
+const faqs = (song?.faqs && Array.isArray(song.faqs) && song.faqs.length > 0)
+  ? song.faqs
+  : ((song?.faq && Array.isArray(song.faq)) ? song.faq : []);
+
+const facts = (song?.facts && Array.isArray(song.facts) && song.facts.length > 0)
+  ? song.facts
+  : ((song?.fact && Array.isArray(song.fact)) ? song.fact : []);
+
+if (song) {
+  song.faqs = faqs;
+  song.facts = facts;
+}
+
+// Helper ekstraksi teks aman untuk String maupun Blocks Strapi v5
+const renderBlocks = (blocks: any): string => {
+  if (!blocks) return '';
+  if (typeof blocks === 'string') return blocks;
+  if (Array.isArray(blocks)) {
+    return blocks.map(block => {
+      if (block?.children && Array.isArray(block.children)) {
+        return block.children.map((child: any) => child?.text || child?.url || '').join('');
+      }
+      return '';
+    }).join('\n');
+  }
+  return '';
+};
+
+// Ekstraktor ID YouTube aman
+const getYouTubeId = (input: any): string | null => {
+  if (!input) return null;
+  let rawStr = '';
+  
+  if (typeof input === 'string') {
+    rawStr = input;
+  } else if (Array.isArray(input)) {
+    for (const b of input) {
+      if (b?.children && Array.isArray(b.children)) {
+        for (const c of b.children) {
+          if (c?.url) { rawStr = c.url; break; }
+          if (c?.text) { rawStr = c.text; break; }
+        }
+      }
+    }
+  }
+
+  if (typeof rawStr !== 'string' || !rawStr) return null;
+  const match = rawStr.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/))([\w-]{11})/);
+  return match ? match[1] : null;
+};
+
+const title = song?.Title || song?.title || 'Lagu Karo';
+const artistNames = (song?.penyanyis && song.penyanyis.length > 0)
+  ? song.penyanyis.map((p: any) => p.name).join(', ')
+  : (song?.penyanyi?.name || 'Artis Tidak Diketahui');
+const artistName = artistNames;
+const artistList: any[] = (song?.penyanyis && song.penyanyis.length > 0)
+  ? song.penyanyis
+  : (song?.penyanyi ? [song.penyanyi] : []);
+const creatorName = song?.pencipta?.name;
+const rawLyrics = renderBlocks(song?.lirik_asli || song?.lyrics_original);
+const rawTranslation = renderBlocks(song?.Terjemahan || song?.lyrics_translation);
+const rawMeaning = renderBlocks(song?.makna_dan_sejarah_lagu || song?.meaning);
+const videoId = getYouTubeId(song?.link_youtube || song?.youtube_link);
+
+// SEO & SMO Canonical & Social Assets
+const songSlug = slug || song?.slug || song?.documentId || '';
+const SITE_URL = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString().replace(/\/$/, '') || 'https://lagukaro.id';
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
+const canonicalUrl = `${SITE_URL}/lagu/${songSlug}`;
+
+// Prioritas thumbnail: cover upload Strapi -> Thumbnail YouTube HQ -> Default banner
+const customCover = song?.cover?.url || song?.gambar?.url;
+const ogImage = customCover
+  ? (customCover.startsWith('http') ? customCover : `${STRAPI_URL}${customCover}`)
+  : (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : `${SITE_URL}/og-image.jpg`);
+
+const metaDescription = `Lirik lagu daerah Karo ${title} dipopulerkan oleh ${artistNames}. Dilengkapi terjemahan bahasa Indonesia, makna lagu, fakta menarik, dan tanya jawab (FAQ).`;
+
+// Schema Markup Terpadu (@graph: MusicRecording & FAQPage untuk Google & GEO)
+const schemaGraph: any[] = [
+  {
+    "@type": "MusicRecording",
+    "@id": `${canonicalUrl}#recording`,
+    "url": canonicalUrl,
+    "name": title,
+    "inLanguage": "btx", // Bahasa Batak Karo (ISO 639-3)
+    "byArtist": artistList.length > 0
+      ? artistList.map((p: any) => ({
+          "@type": "MusicGroup",
+          "name": p.name || artistNames
+        }))
+      : {
+          "@type": "MusicGroup",
+          "name": artistNames
+        },
+    ...(creatorName ? {
+      "recordingOf": {
+        "@type": "MusicComposition",
+        "name": title,
+        "composer": {
+          "@type": "Person",
+          "name": creatorName
+        },
+        "lyricist": {
+          "@type": "Person",
+          "name": creatorName
+        },
+        "inLanguage": "btx"
+      }
+    } : {}),
+    ...(videoId ? {
+      "video": {
+        "@type": "VideoObject",
+        "name": `Video Klip ${title} - ${artistName}`,
+        "embedUrl": `https://www.youtube-nocookie.com/embed/${videoId}`,
+        "thumbnailUrl": ogImage,
+        "uploadDate": song?.createdAt || "2024-01-01T00:00:00Z"
+      }
+    } : {}),
+    "image": ogImage,
+    "description": metaDescription
+  }
+];
+
+if (song?.faqs && Array.isArray(song.faqs) && song.faqs.length > 0) {
+  schemaGraph.push({
+    "@type": "FAQPage",
+    "@id": `${canonicalUrl}#faq`,
+    "mainEntity": song.faqs.map((item: any) => ({
+      "@type": "Question",
+      "name": item.question || item.pertanyaan || '',
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer || item.jawaban || ''
+      }
+    }))
+  });
+}
+
+const combinedSchema = {
+  "@context": "https://schema.org",
+  "@graph": schemaGraph
+};
+---
+
+<Layout 
+  title={`${title} - Lirik & Terjemahan Karo`} 
+  description={metaDescription}
+  canonicalUrl={canonicalUrl}
+  image={ogImage}
+  type="music.song"
+>
+  <!-- Inject JSON-LD Schema Terpadu (@graph) ke <head> -->
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(combinedSchema)} />
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+    <!-- BREADCRUMBS & HEADER -->
+    <div class="mb-6 border-b border-white/10 pb-6">
+      <div class="flex items-center gap-2 text-xs text-neutral-400 mb-3 font-medium">
+        <a href="/" class="text-neutral-400 hover:text-white transition">Beranda</a>
+        <span>/</span>
+        <a href="/indeks-lagu" class="text-neutral-400 hover:text-white transition">Indeks Lagu</a>
+        <span>/</span>
+        <span class="text-red-400 font-bold">{title}</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-white font-['Outfit'] leading-tight">
+        {title}
+      </h1>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-400 text-sm sm:text-base mt-2 font-medium">
+        <p>
+          Dipopulerkan oleh: <span class="text-red-400 font-bold">{artistNames}</span>
+        </p>
+        {creatorName && (
+          <p class="before:content-['•'] before:mr-3 before:text-neutral-600">
+            Ciptaan: <span class="text-amber-400 font-bold">{creatorName}</span>
+          </p>
+        )}
+
+        <!-- Badge View Counter -->
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-neutral-800/80 text-neutral-300 border border-neutral-700/50">
+          <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <span id="view-counter" class="text-white font-semibold">{song?.views ?? 0}</span>
+          <span>kali dilihat</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- SISI KIRI: Lirik, Terjemahan, Makna, Fakta & FAQ -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Lirik Asli -->
+        <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <h2 class="text-lg font-bold text-red-400 font-['Outfit'] flex items-center gap-2 border-b border-white/5 pb-3">
+            <span>📜</span> Lirik Asli (Bahasa Karo)
+          </h2>
+          <pre class="whitespace-pre-wrap font-sans text-neutral-100 leading-relaxed text-base font-normal">{rawLyrics || 'Lirik belum tersedia.'}</pre>
+        </div>
+
+        <!-- Terjemahan -->
+        <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <h2 class="text-lg font-bold text-red-400 font-['Outfit'] flex items-center gap-2 border-b border-white/5 pb-3">
+            <span>🇮🇩</span> Terjemahan (Bahasa Indonesia)
+          </h2>
+          <pre class="whitespace-pre-wrap font-sans text-neutral-300 leading-relaxed text-base italic font-normal">{rawTranslation || 'Terjemahan belum tersedia.'}</pre>
+        </div>
+
+        <!-- Makna & Sejarah Lagu -->
+        {rawMeaning && (
+          <div class="glass-panel-glow rounded-2xl p-6 sm:p-8 space-y-3">
+            <h2 class="text-lg font-bold text-red-400 font-['Outfit'] flex items-center gap-2 border-b border-white/5 pb-3">
+              <span>💡</span> Makna & Sejarah Lagu
+            </h2>
+            <p class="text-neutral-300 leading-relaxed text-sm">{rawMeaning}</p>
+          </div>
+        )}
+
+        <!-- Fakta Menarik (Facts) -->
+        {facts?.length > 0 && (
+          <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl border border-white/10">
+            <h2 class="text-lg sm:text-xl font-bold text-amber-400 font-['Outfit'] flex items-center gap-2 border-b border-white/10 pb-3">
+              <span>✨</span> Fakta Menarik Lagu
+            </h2>
+            <ul class="space-y-3 text-sm text-neutral-300">
+              {facts.map((fact: any) => {
+                const desc = typeof fact === 'string'
+                  ? fact
+                  : (renderBlocks(fact.description) || renderBlocks(fact.fact) || renderBlocks(fact.fakta) || renderBlocks(fact.content) || '');
+                return (
+                  <li class="flex items-start gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+                    <span class="text-amber-400 font-bold text-base leading-none mt-0.5">✦</span>
+                    <div class="leading-relaxed text-xs sm:text-sm">
+                      {fact.title && <strong class="text-white block mb-0.5">{fact.title}:</strong>}
+                      <span class="text-neutral-300">{desc}</span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        <!-- Tanya Jawab (FAQ) - Accordion Interaktif -->
+        {song?.faqs?.length > 0 && (
+          <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-5 shadow-xl border border-white/10">
+            <div class="border-b border-white/10 pb-3 flex items-center justify-between">
+              <h2 class="text-lg sm:text-xl font-bold text-red-400 font-['Outfit'] flex items-center gap-2">
+                <span>❓</span> Tanya Jawab Seputar Lagu (FAQ)
+              </h2>
+              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-red-950/60 text-red-300 border border-red-800/30 font-['Outfit']">
+                {song.faqs.length} Pertanyaan
+              </span>
+            </div>
+            <div class="space-y-3">
+              {song.faqs.map((item: any, idx: number) => (
+                <details class="group rounded-xl bg-white/[0.03] border border-white/5 hover:border-red-600/30 transition-all p-4 open:bg-white/[0.05]" open={idx === 0}>
+                  <summary class="flex items-center justify-between cursor-pointer font-bold text-sm sm:text-base text-white font-['Outfit'] select-none">
+                    <span class="group-hover:text-red-400 transition-colors pr-2">
+                      {item.question || item.pertanyaan}
+                    </span>
+                    <span class="text-xs text-red-400 transition-transform duration-200 group-open:rotate-180 ml-2 flex-shrink-0">
+                      ▼
+                    </span>
+                  </summary>
+                  <p class="mt-3 text-xs sm:text-sm text-neutral-300 leading-relaxed pt-3 border-t border-white/5 font-normal">
+                    {item.answer || item.jawaban}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- SISI KANAN: Player YouTube & Artis Info -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-24 space-y-6">
+          {videoId && (
+            <div class="glass-panel rounded-2xl overflow-hidden shadow-xl border border-white/10">
+              <div class="aspect-video w-full">
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+                  title={title}
+                  class="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <div class="p-3 bg-[#131218] text-xs text-neutral-400 flex justify-between items-center font-medium">
+                <span>Pemutar Musik YouTube</span>
+                <span class="text-red-400 font-bold font-['Outfit']">Resmi</span>
+              </div>
+            </div>
+          )}
+
+          {artistList.length > 0 && (
+            <div class="space-y-4">
+              {artistList.map((artist: any) => (
+                <div class="glass-panel rounded-2xl p-5 border border-white/10 space-y-2">
+                  <h3 class="text-xs uppercase font-bold text-red-400 font-['Outfit'] tracking-wider">Tentang Penyanyi</h3>
+                  <p class="text-base font-bold text-white font-['Outfit']">{artist.name}</p>
+                  {(artist.biography || artist.Biography) && (
+                    <p class="text-xs text-neutral-400 leading-relaxed font-normal pt-1">
+                      {renderBlocks(artist.biography || artist.Biography)}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {song?.pencipta && (
+            <div class="glass-panel rounded-2xl p-5 border border-white/10 space-y-2">
+              <h3 class="text-xs uppercase font-bold text-amber-400 font-['Outfit'] tracking-wider">Tentang Pencipta</h3>
+              <p class="text-base font-bold text-white font-['Outfit']">{song.pencipta.name}</p>
+              {(song.pencipta.biography || song.pencipta.Biography) && (
+                <p class="text-xs text-neutral-400 leading-relaxed font-normal pt-1">
+                  {renderBlocks(song.pencipta.biography || song.pencipta.Biography)}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ docId: song?.documentId, apiUrl: import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id' }}>
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!docId) return;
+
+    const storageKey = `viewed_${docId}`;
+
+    // Hanya kirim sinyal jika lagu ini belum dilihat dalam sesi browser saat ini
+    if (!sessionStorage.getItem(storageKey)) {
+      try {
+        const response = await fetch(`${apiUrl}/api/lagus/${docId}/view`, {
+          method: 'POST',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const counterEl = document.getElementById('view-counter');
+          
+          // Update teks angka view di layar secara instan
+          if (counterEl && data.views !== undefined) {
+            counterEl.textContent = data.views;
+          }
+
+          // Tandai sesi
+          sessionStorage.setItem(storageKey, 'true');
+        }
+      } catch (err) {
+        console.error('Gagal memperbarui view counter:', err);
+      }
+    }
+  });
+</script>
