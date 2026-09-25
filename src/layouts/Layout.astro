@@ -85,24 +85,24 @@ const resolvedImage = image.startsWith('http')
     <!-- Slot for additional head tags (e.g. JSON-LD Schema) -->
     <slot name="head" />
   </head>
-  <body class="bg-[var(--bg-base)] text-[var(--text-main)] min-h-screen font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-[#C27A65] selection:text-white overflow-x-hidden transition-colors duration-200">
+  <body class="bg-[var(--bg-base)] text-[var(--text-main)] min-h-screen font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-[var(--brand-primary)] selection:text-white overflow-x-hidden transition-colors duration-200">
     <!-- Top Brand Navbar - Karo Cultural Clean Header -->
     <header class="border-b border-[var(--header-border)] bg-[var(--header-bg)] backdrop-blur-md sticky top-0 z-50 transition-colors duration-200">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <a href="/" class="group flex items-center gap-2.5">
-          <div class="w-8 h-8 bg-[#C27A65] rounded-lg flex items-center justify-center text-white font-extrabold text-sm shadow-[0_0_12px_rgba(194,122,101,0.4)] group-hover:scale-105 transition-transform duration-200 font-['Outfit']">
+          <div class="w-8 h-8 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center text-white font-extrabold text-sm shadow-xs group-hover:scale-105 transition-transform duration-200 font-['Outfit']">
             GK
           </div>
-          <span class="text-xl font-bold tracking-tight text-[var(--text-main)] uppercase font-['Outfit'] group-hover:text-[#C27A65] transition-colors">
-            GENDANG<span class="text-[#C27A65]">KARO</span>
+          <span class="text-xl font-bold tracking-tight text-[var(--text-main)] uppercase font-['Outfit'] group-hover:text-[var(--brand-primary)] transition-colors">
+            GENDANG<span class="text-[var(--brand-primary)]">KARO</span>
           </span>
         </a>
 
         <nav class="flex items-center space-x-1 sm:space-x-3">
-          <a href="/indeks-lagu" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-[var(--text-muted)] hover:text-[#C27A65] hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+          <a href="/indeks-lagu" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--brand-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all">
             Indeks Lagu (A-Z)
           </a>
-          <a href="/#trending" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#C27A65] hover:bg-[#B06B56] text-white text-xs font-bold rounded-lg tracking-wide uppercase transition-all shadow-xs hover:scale-105">
+          <a href="/#trending" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs font-bold rounded-lg tracking-wide uppercase transition-all shadow-xs hover:scale-105">
             <span>🔥 Trending</span>
           </a>
 
@@ -111,15 +111,15 @@ const resolvedImage = image.startsWith('http')
             id="themeToggleBtn"
             type="button"
             aria-label="Ganti mode terang atau gelap"
-            class="w-9 h-9 ml-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] flex items-center justify-center hover:border-[#C27A65] hover:text-[#C27A65] transition-all cursor-pointer shadow-xs"
+            class="w-9 h-9 ml-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] flex items-center justify-center hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] transition-all cursor-pointer shadow-xs"
             title="Ganti Mode Tampilan"
           >
             <!-- Sun Icon (Shown in Dark Mode) -->
-            <svg class="w-4 h-4 hidden dark:block text-[#D48974]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 hidden dark:block text-[var(--brand-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             <!-- Moon Icon (Shown in Light Mode) -->
-            <svg class="w-4 h-4 block dark:hidden text-[#3E2723]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 block dark:hidden text-[var(--text-main)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           </button>
@@ -137,7 +137,7 @@ const resolvedImage = image.startsWith('http')
     <footer class="border-t border-[var(--border-color)] mt-24 py-10 bg-[var(--bg-surface)] text-center text-xs text-[var(--text-muted)] relative z-10 transition-colors duration-200">
       <div class="max-w-6xl mx-auto px-4 space-y-3">
         <div class="flex items-center justify-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-[#C27A65] animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-[var(--brand-primary)] animate-pulse"></span>
           <span class="font-['Outfit'] font-bold text-sm tracking-wider uppercase text-[var(--text-main)]">GENDANG KARO</span>
         </div>
         <p class="text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">

@@ -3,42 +3,45 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Earthy & Natural (Paper Ivory, Deep Espresso, Soft Terracotta & Sage Green) */
-  --bg-base: #f8f4e6;          /* Paper Ivory */
-  --bg-surface: #ffffff;       /* Clean White Card */
-  --bg-elevated: #f0ead6;      /* Warm Ivory Hover */
-  --border-color: #e5dcce;     /* Earthy Border */
-  --border-hover: #c27a65;     /* Soft Terracotta Hover */
-  --text-main: #3e2723;        /* Deep Espresso */
-  --text-muted: #6d4c41;       /* Warm Espresso Muted */
-  --text-subtle: #8d6e63;
-  --brand-primary: #c27a65;    /* Soft Terracotta */
-  --brand-primary-hover: #b06b56;
-  --brand-secondary: #8a9a86;  /* Sage Green */
-  --brand-secondary-dark: #4e5e4a;
-  --header-bg: rgba(248, 244, 230, 0.95);
-  --header-border: #e5dcce;
-  --shadow-card: 0 1px 3px rgba(62, 39, 35, 0.06), 0 1px 2px rgba(62, 39, 35, 0.04);
-  --shadow-card-hover: 0 10px 25px -5px rgba(62, 39, 35, 0.09), 0 8px 10px -6px rgba(62, 39, 35, 0.05);
+  /* Folk Festival (Warm Beige #F5F5DC, Deep Earth #3D2614, Saddle Wood Brown #8B4513, Folk Teal #20B2AA, Gold #D4AF37) */
+  --bg-base: #f5f5dc;          /* Warm Linen / Folk Beige */
+  --bg-surface: #fdfdf7;       /* Soft Light Surface Card */
+  --bg-elevated: #eaeac6;      /* Slightly Deeper Hover Beige */
+  --border-color: #dfdcb8;     /* Organic Folk Border */
+  --border-hover: #8b4513;     /* Saddle Brown Border Hover */
+  --text-main: #3d2614;        /* Deep Earth / Roasted Espresso */
+  --text-muted: #73543d;       /* Warm Earth Muted */
+  --text-subtle: #96765d;
+  --brand-primary: #8b4513;    /* Saddle Wood Brown (Instrument Tone) */
+  --brand-primary-hover: #70360d;
+  --brand-secondary: #20b2aa;  /* Folk Teal / Hijau Laut Tradisional */
+  --brand-secondary-dark: #14756f;
+  --brand-accent: #d4af37;     /* Warm Gold / Ochre */
+  --header-bg: rgba(245, 245, 220, 0.95);
+  --header-border: #dfdcb8;
+  --shadow-card: 0 1px 3px rgba(61, 38, 20, 0.07), 0 1px 2px rgba(61, 38, 20, 0.04);
+  --shadow-card-hover: 0 10px 25px -5px rgba(61, 38, 20, 0.12), 0 8px 10px -6px rgba(61, 38, 20, 0.06);
 }
 
 .dark {
-  --bg-base: #181311;          /* Deep Roast Espresso */
-  --bg-surface: #221b18;       /* Warm Dark Espresso Card */
-  --bg-elevated: #2c221e;      /* Elevated Dark Card */
-  --border-color: rgba(248, 244, 230, 0.12);
-  --border-hover: rgba(212, 137, 116, 0.4);
-  --text-main: #f8f4e6;        /* Paper Ivory Text */
-  --text-muted: #c7bca9;       /* Soft Muted Ivory */
-  --text-subtle: #968a78;
-  --brand-primary: #d48974;    /* Terracotta for Dark Mode */
-  --brand-primary-hover: #c27a65;
-  --brand-secondary: #9fb19b;  /* Sage Green for Dark Mode */
-  --brand-secondary-dark: #c0cfbc;
-  --header-bg: rgba(24, 19, 17, 0.95);
-  --header-border: rgba(248, 244, 230, 0.1);
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 137, 116, 0.15);
+  /* Original Karo Dark Mode (Dominasi Hitam Obsidian & Merah Gelap / Merah Karo) */
+  --bg-base: #0d0c10;          /* Deep Obsidian Charcoal */
+  --bg-surface: #15141b;       /* Dark Karo Card */
+  --bg-elevated: #1e1d26;      /* Elevated Dark Card */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(220, 38, 38, 0.45);
+  --text-main: #f3f4f6;        /* Clean White / Light Gray */
+  --text-muted: #9ca3af;       /* Cool Muted Gray */
+  --text-subtle: #6b7280;
+  --brand-primary: #dc2626;    /* Merah Karo Solid */
+  --brand-primary-hover: #ef4444; /* Merah Terang Hover */
+  --brand-secondary: #991b1b;  /* Merah Gelap Karo */
+  --brand-secondary-dark: #f87171;
+  --brand-accent: #ffd700;     /* Gold Accent */
+  --header-bg: rgba(13, 12, 16, 0.95);
+  --header-border: rgba(255, 255, 255, 0.08);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(220, 38, 38, 0.25);
 }
 
 @layer utilities {

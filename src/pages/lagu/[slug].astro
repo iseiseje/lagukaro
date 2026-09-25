@@ -179,18 +179,18 @@ const combinedSchema = {
     <!-- BREADCRUMBS & HEADER -->
     <div class="mb-6 border-b border-[var(--border-color)] pb-6">
       <div class="flex items-center gap-2 text-xs text-[var(--text-muted)] mb-3 font-medium">
-        <a href="/" class="hover:text-[#C27A65] transition">Beranda</a>
+        <a href="/" class="hover:text-[var(--brand-primary)] transition">Beranda</a>
         <span>/</span>
-        <a href="/indeks-lagu" class="hover:text-[#C27A65] transition">Indeks Lagu</a>
+        <a href="/indeks-lagu" class="hover:text-[var(--brand-primary)] transition">Indeks Lagu</a>
         <span>/</span>
-        <span class="text-[#C27A65] font-bold">{title}</span>
+        <span class="text-[var(--brand-primary)] font-bold">{title}</span>
       </div>
       <h1 class="text-3xl sm:text-5xl font-extrabold text-[var(--text-main)] font-['Outfit'] leading-tight">
         {title}
       </h1>
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[var(--text-muted)] text-sm sm:text-base mt-2 font-medium">
         <p>
-          Dipopulerkan oleh: <span class="text-[#C27A65] font-bold">{artistNames}</span>
+          Dipopulerkan oleh: <span class="text-[var(--brand-primary)] font-bold">{artistNames}</span>
         </p>
         {creatorName && (
           <p class="before:content-['•'] before:mr-3 before:text-[var(--text-subtle)]">
@@ -216,7 +216,7 @@ const combinedSchema = {
       <div class="lg:col-span-2 space-y-6">
         <!-- Lirik Asli -->
         <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
-          <h2 class="text-lg font-bold text-[#C27A65] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
+          <h2 class="text-lg font-bold text-[var(--brand-primary)] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
             <span>📜</span> Lirik Asli (Bahasa Karo)
           </h2>
           <pre class="whitespace-pre-wrap font-['Lora',serif] text-[var(--text-main)] leading-relaxed text-base sm:text-lg font-normal tracking-wide">{rawLyrics || 'Lirik belum tersedia.'}</pre>
@@ -224,7 +224,7 @@ const combinedSchema = {
 
         <!-- Terjemahan -->
         <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
-          <h2 class="text-lg font-bold text-[#C27A65] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
+          <h2 class="text-lg font-bold text-[var(--brand-primary)] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
             <span>🇮🇩</span> Terjemahan (Bahasa Indonesia)
           </h2>
           <pre class="whitespace-pre-wrap font-['Lora',serif] text-[var(--text-muted)] leading-relaxed text-base italic font-normal tracking-wide">{rawTranslation || 'Terjemahan belum tersedia.'}</pre>
@@ -233,7 +233,7 @@ const combinedSchema = {
         <!-- Makna & Sejarah Lagu -->
         {rawMeaning && (
           <div class="glass-panel-glow rounded-2xl p-6 sm:p-8 space-y-3">
-            <h2 class="text-lg font-bold text-[#C27A65] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
+            <h2 class="text-lg font-bold text-[var(--brand-primary)] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
               <span>💡</span> Makna & Sejarah Lagu
             </h2>
             <p class="text-[var(--text-main)] leading-relaxed text-sm">{rawMeaning}</p>
@@ -243,7 +243,7 @@ const combinedSchema = {
         <!-- Fakta Menarik (Facts) -->
         {facts?.length > 0 && (
           <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
-            <h2 class="text-lg sm:text-xl font-bold text-[#C27A65] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
+            <h2 class="text-lg sm:text-xl font-bold text-[var(--brand-primary)] font-['Outfit'] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
               <span>✨</span> Fakta Menarik Lagu
             </h2>
             <ul class="space-y-3 text-sm text-[var(--text-muted)]">
@@ -253,7 +253,7 @@ const combinedSchema = {
                   : (renderBlocks(fact.description) || renderBlocks(fact.fact) || renderBlocks(fact.fakta) || renderBlocks(fact.content) || '');
                 return (
                   <li class="flex items-start gap-3 p-3.5 rounded-xl bg-neutral-50 dark:bg-white/[0.02] border border-[var(--border-color)]">
-                    <span class="text-[#C27A65] font-bold text-base leading-none mt-0.5">✦</span>
+                    <span class="text-[var(--brand-primary)] font-bold text-base leading-none mt-0.5">✦</span>
                     <div class="leading-relaxed text-xs sm:text-sm">
                       {fact.title && <strong class="text-[var(--text-main)] block mb-0.5">{fact.title}:</strong>}
                       <span class="text-[var(--text-muted)]">{desc}</span>
@@ -269,21 +269,21 @@ const combinedSchema = {
         {song?.faqs?.length > 0 && (
           <div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-5 shadow-sm">
             <div class="border-b border-[var(--border-color)] pb-3 flex items-center justify-between">
-              <h2 class="text-lg sm:text-xl font-bold text-[#C27A65] font-['Outfit'] flex items-center gap-2">
+              <h2 class="text-lg sm:text-xl font-bold text-[var(--brand-primary)] font-['Outfit'] flex items-center gap-2">
                 <span>❓</span> Tanya Jawab Seputar Lagu (FAQ)
               </h2>
-              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#8A9A86]/20 text-[#4E5E4A] dark:text-[#9FB19B] border border-[#8A9A86]/30 font-['Outfit']">
+              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[var(--brand-secondary)]/20 text-[var(--brand-secondary-dark)] dark:text-[#20B2AA] border border-[var(--brand-secondary)]/30 font-['Outfit']">
                 {song.faqs.length} Pertanyaan
               </span>
             </div>
             <div class="space-y-3">
               {song.faqs.map((item: any, idx: number) => (
-                <details class="group rounded-xl bg-neutral-50 dark:bg-white/[0.03] border border-[var(--border-color)] hover:border-[#C27A65]/40 transition-all p-4 open:bg-neutral-100/70 dark:open:bg-white/[0.05]" open={idx === 0}>
+                <details class="group rounded-xl bg-neutral-50 dark:bg-white/[0.03] border border-[var(--border-color)] hover:border-[var(--brand-primary)]/40 transition-all p-4 open:bg-neutral-100/70 dark:open:bg-white/[0.05]" open={idx === 0}>
                   <summary class="flex items-center justify-between cursor-pointer font-bold text-sm sm:text-base text-[var(--text-main)] font-['Outfit'] select-none">
-                    <span class="group-hover:text-[#C27A65] transition-colors pr-2">
+                    <span class="group-hover:text-[var(--brand-primary)] transition-colors pr-2">
                       {item.question || item.pertanyaan}
                     </span>
-                    <span class="text-xs text-[#C27A65] transition-transform duration-200 group-open:rotate-180 ml-2 flex-shrink-0">
+                    <span class="text-xs text-[var(--brand-primary)] transition-transform duration-200 group-open:rotate-180 ml-2 flex-shrink-0">
                       ▼
                     </span>
                   </summary>
@@ -313,7 +313,7 @@ const combinedSchema = {
               </div>
               <div class="p-3 bg-neutral-50 dark:bg-[#131218] border-t border-[var(--border-color)] text-xs text-[var(--text-muted)] flex justify-between items-center font-medium">
                 <span>Pemutar Musik YouTube</span>
-                <span class="text-[#8A9A86] font-bold font-['Outfit']">Resmi</span>
+                <span class="text-[var(--brand-secondary)] font-bold font-['Outfit']">Resmi</span>
               </div>
             </div>
           )}
@@ -322,7 +322,7 @@ const combinedSchema = {
             <div class="space-y-4">
               {artistList.map((artist: any) => (
                 <div class="glass-panel rounded-2xl p-5 space-y-2">
-                  <h3 class="text-xs uppercase font-bold text-[#C27A65] font-['Outfit'] tracking-wider">Tentang Penyanyi</h3>
+                  <h3 class="text-xs uppercase font-bold text-[var(--brand-primary)] font-['Outfit'] tracking-wider">Tentang Penyanyi</h3>
                   <p class="text-base font-bold text-[var(--text-main)] font-['Outfit']">{artist.name}</p>
                   {(artist.biography || artist.Biography) && (
                     <p class="text-xs text-[var(--text-muted)] leading-relaxed font-normal pt-1">
@@ -336,7 +336,7 @@ const combinedSchema = {
 
           {song?.pencipta && (
             <div class="glass-panel rounded-2xl p-5 space-y-2">
-              <h3 class="text-xs uppercase font-bold text-[#C27A65] font-['Outfit'] tracking-wider">Tentang Pencipta</h3>
+              <h3 class="text-xs uppercase font-bold text-[var(--brand-primary)] font-['Outfit'] tracking-wider">Tentang Pencipta</h3>
               <p class="text-base font-bold text-[var(--text-main)] font-['Outfit']">{song.pencipta.name}</p>
               {(song.pencipta.biography || song.pencipta.Biography) && (
                 <p class="text-xs text-[var(--text-muted)] leading-relaxed font-normal pt-1">

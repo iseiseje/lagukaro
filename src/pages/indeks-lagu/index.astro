@@ -35,7 +35,7 @@ allSongs.forEach((song: any) => {
     
     <!-- HEADER -->
     <div class="text-center max-w-3xl mx-auto space-y-3">
-      <span class="text-xs font-bold tracking-widest text-[#8A9A86] uppercase font-['Outfit']">KATALOG PUSTAKA MUSIK</span>
+      <span class="text-xs font-bold tracking-widest text-[var(--brand-secondary)] uppercase font-['Outfit']">KATALOG PUSTAKA MUSIK</span>
       <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-[var(--text-main)] uppercase font-['Outfit']">
         Indeks Lagu Karo (A-Z)
       </h1>
@@ -56,8 +56,8 @@ allSongs.forEach((song: any) => {
             href={`/indeks-lagu/${letterSlug}`}
             class={`relative flex flex-col items-center justify-center aspect-square rounded-3xl transition-all duration-200 font-['Outfit'] border select-none group ${
               hasSongs
-                ? 'glass-panel text-[var(--text-main)] hover:border-[#C27A65] hover:text-[#C27A65] hover:-translate-y-1 hover:shadow-md'
-                : 'glass-panel opacity-60 text-[var(--text-subtle)] hover:opacity-100 hover:text-[var(--text-main)] hover:border-[#C27A65]/40'
+                ? 'glass-panel text-[var(--text-main)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] hover:-translate-y-1 hover:shadow-md'
+                : 'glass-panel opacity-60 text-[var(--text-subtle)] hover:opacity-100 hover:text-[var(--text-main)] hover:border-[var(--brand-primary)]/40'
             }`}
             title={`Lihat daftar lagu huruf ${letter}`}
           >
@@ -65,7 +65,7 @@ allSongs.forEach((song: any) => {
               {letter}
             </span>
             {hasSongs ? (
-              <span class="mt-2 px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold bg-[#C27A65] text-white shadow-xs">
+              <span class="mt-2 px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold bg-[var(--brand-primary)] text-white shadow-xs">
                 {count} {count === 1 ? 'Lagu' : 'Lagu'}
               </span>
             ) : (
