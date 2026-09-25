@@ -4,34 +4,41 @@
  * Ornamen Asli Tradisional Karo: Pengeret-ret (Cicak Berkepala Dua)
  * Replikasi Akurat 1:1 Ilustrasi Dian Bangun (Gerga Ret-ret).
  * 
- * Update Desain:
- * - Ukuran Ramping & Proporsional: Tinggi 26px (sebelumnya 46px), sangat elegan di bawah navbar.
- * - Latar Belakang Selaras Website: Menggunakan warna gelap (#0d0c10 / glass) senada dengan navbar & tema gelap utama.
+ * Update Desain & Tema Adaptif:
+ * - Ukuran Ramping & Proporsional: Tinggi 26px, elegan di bawah navbar.
+ * - Latar Belakang Adaptif:
+ *   - Light Mode: Rona krem gading hangat (var(--bg-elevated) / #f4efe6) selaras dengan tema buku/kertas.
+ *   - Dark Mode: Hitam pekat (#0d0c10) senada dengan tema gelap.
+ * - Cakar & Kaki Responsif (currentColor):
+ *   - Light Mode: Hitam arang pekat (text-neutral-800) berkontras tinggi di atas latar terang.
+ *   - Dark Mode: Putih bersih (dark:text-neutral-100) berkontras tinggi di atas latar gelap.
  * - Warna Tradisional Karo Autentik:
  *   - Belah ketupat tengah: Merah Karo solid (#DC2626).
  *   - Belah ketupat atas & bawah: Putih solid (#FFFFFF) bergaris batas hitam (#111111).
  *   - Kepala lancip: Putih solid (#FFFFFF) dengan mata hitam (#111111).
- *   - Kaki bersiku & 3 cakar: Putih bersih (#F3F4F6) berpadu kontras tinggi di atas latar gelap.
  * - Animasi Scroll: Menambah ruas ketupat ke kanan saat scroll ke bawah, dan berkurang saat scroll ke atas.
  */
 ---
 
-<div class="pengeret-strip" style="position: relative; width: 100%; height: 26px; background: #0d0c10; border-bottom: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.04); overflow: hidden; pointer-events: none;" aria-hidden="true">
+<div 
+  class="pengeret-strip relative w-full h-[26px] overflow-hidden pointer-events-none bg-[var(--bg-elevated)] dark:bg-[#0d0c10] border-y border-[var(--border-color)] transition-colors duration-200" 
+  aria-hidden="true"
+>
   
   <!-- 1. KEPALA KIRI (Fixed di x = 0) -->
-  <div id="pengeretHeadLeft" style="position: absolute; left: 0px; top: 0px; width: 56px; height: 26px; z-index: 20;">
+  <div id="pengeretHeadLeft" class="text-neutral-800 dark:text-neutral-100" style="position: absolute; left: 0px; top: 0px; width: 56px; height: 26px; z-index: 20;">
     <svg width="56" height="26" viewBox="0 0 56 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; overflow: visible;">
-      <!-- Kaki Kiri Atas (Putih kontras di atas latar gelap, 3 cakar) -->
-      <polyline points="44,9.5 53,5 34,2" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-      <line x1="34" y1="2" x2="30" y2="1" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="34" y1="2" x2="32" y2="4" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="34" y1="2" x2="35" y2="5" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <!-- Kaki Kiri Atas (Responsif: Hitam di Light Mode, Putih di Dark Mode) -->
+      <polyline points="44,9.5 53,5 34,2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="34" y1="2" x2="30" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="2" x2="32" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="2" x2="35" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
 
-      <!-- Kaki Kiri Bawah (Putih kontras di atas latar gelap, 3 cakar) -->
-      <polyline points="44,16.5 53,21 34,24" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-      <line x1="34" y1="24" x2="30" y2="25" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="34" y1="24" x2="32" y2="22" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="34" y1="24" x2="35" y2="21" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <!-- Kaki Kiri Bawah (Responsif: Hitam di Light Mode, Putih di Dark Mode) -->
+      <polyline points="44,16.5 53,21 34,24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="34" y1="24" x2="30" y2="25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="24" x2="32" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="34" y1="24" x2="35" y2="21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
 
       <!-- Kepala Lancip Kiri Putih -->
       <polygon points="5,13 44,9.5 56,13 44,16.5" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
@@ -67,19 +74,19 @@
   </div>
 
   <!-- 3. KEPALA KANAN (Bergerak mulus di ujung badan yang bertambah) -->
-  <div id="pengeretHeadRight" style="position: absolute; left: 56px; top: 0px; width: 56px; height: 26px; z-index: 20; will-change: left;">
+  <div id="pengeretHeadRight" class="text-neutral-800 dark:text-neutral-100" style="position: absolute; left: 56px; top: 0px; width: 56px; height: 26px; z-index: 20; will-change: left;">
     <svg width="56" height="26" viewBox="0 0 56 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; overflow: visible;">
-      <!-- Kaki Kanan Atas (Putih kontras di atas latar gelap, 3 cakar) -->
-      <polyline points="12,9.5 3,5 22,2" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-      <line x1="22" y1="2" x2="26" y2="1" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="22" y1="2" x2="24" y2="4" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="22" y1="2" x2="21" y2="5" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <!-- Kaki Kanan Atas (Responsif: Hitam di Light Mode, Putih di Dark Mode) -->
+      <polyline points="12,9.5 3,5 22,2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="22" y1="2" x2="26" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="2" x2="24" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="2" x2="21" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
 
-      <!-- Kaki Kanan Bawah (Putih kontras di atas latar gelap, 3 cakar) -->
-      <polyline points="12,16.5 3,21 22,24" fill="none" stroke="#F3F4F6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-      <line x1="22" y1="24" x2="26" y2="25" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="22" y1="24" x2="24" y2="22" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
-      <line x1="22" y1="24" x2="21" y2="21" stroke="#F3F4F6" stroke-width="1.5" stroke-linecap="round" />
+      <!-- Kaki Kanan Bawah (Responsif: Hitam di Light Mode, Putih di Dark Mode) -->
+      <polyline points="12,16.5 3,21 22,24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="22" y1="24" x2="26" y2="25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="24" x2="24" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <line x1="22" y1="24" x2="21" y2="21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
 
       <!-- Kepala Lancip Kanan Putih -->
       <polygon points="51,13 12,9.5 0,13 12,16.5" fill="#FFFFFF" stroke="#111111" stroke-width="1.5" stroke-linejoin="round" />
