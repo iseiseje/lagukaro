@@ -3,20 +3,20 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg-base: #f8fafc;
+  --bg-base: #faf7f2;
   --bg-surface: #ffffff;
-  --bg-elevated: #f1f5f9;
-  --border-color: #e2e8f0;
-  --border-hover: #cbd5e1;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
+  --bg-elevated: #f4efe6;
+  --border-color: #e8e0d2;
+  --border-hover: #d9cfbd;
+  --text-main: #1c1917;
+  --text-muted: #57534e;
+  --text-subtle: #8a857e;
   --brand-red: #dc2626;
   --brand-red-hover: #b91c1c;
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --header-border: #e2e8f0;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --header-bg: rgba(250, 247, 242, 0.95);
+  --header-border: #e8e0d2;
+  --shadow-card: 0 1px 3px rgba(44, 30, 15, 0.05), 0 1px 2px rgba(44, 30, 15, 0.03);
+  --shadow-card-hover: 0 10px 25px -5px rgba(44, 30, 15, 0.08), 0 8px 10px -6px rgba(44, 30, 15, 0.04);
 }
 
 .dark {
@@ -105,7 +105,7 @@
   background: var(--bg-base);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d6ccbe;
   border-radius: 9999px;
 }
 .dark ::-webkit-scrollbar-thumb {
