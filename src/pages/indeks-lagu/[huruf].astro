@@ -74,7 +74,7 @@ const formatViews = (num: any) => {
     <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
       <a
         href="/indeks-lagu"
-        class="inline-flex items-center gap-2 text-xs font-bold text-red-600 dark:text-red-400 hover:underline font-['Outfit'] uppercase tracking-wider transition-colors"
+        class="inline-flex items-center gap-2 text-xs font-bold text-[#C27A65] hover:underline font-['Outfit'] uppercase tracking-wider transition-colors"
       >
         <span>← Kembali ke Semua Abjad</span>
       </a>
@@ -93,13 +93,13 @@ const formatViews = (num: any) => {
               href={`/indeks-lagu/${item.slug}`}
               class={`px-3 py-1.5 rounded-lg text-xs font-bold font-['Outfit'] transition-all flex items-center gap-1 flex-shrink-0 ${
                 isCurrent
-                  ? 'bg-red-600 text-white shadow-xs'
-                  : 'glass-panel text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-red-600/40'
+                  ? 'bg-[#C27A65] text-white shadow-xs'
+                  : 'glass-panel text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[#C27A65]/40'
               }`}
             >
               <span>{item.letter}</span>
               {item.count > 0 && (
-                <span class={`text-[9px] px-1 py-0.2 rounded-full ${isCurrent ? 'bg-black/30 text-white' : 'bg-red-100 dark:bg-red-950/70 text-red-700 dark:text-red-400'}`}>
+                <span class={`text-[9px] px-1 py-0.2 rounded-full ${isCurrent ? 'bg-black/30 text-white' : 'bg-[#C27A65]/15 text-[#C27A65]'}`}>
                   {item.count}
                 </span>
               )}
@@ -113,9 +113,9 @@ const formatViews = (num: any) => {
     <div class="space-y-2">
       <div class="flex items-center gap-3">
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[var(--text-main)] font-['Outfit'] uppercase tracking-tight">
-          Lagu Berawalan Huruf <span class="text-red-600 dark:text-red-500">"{letter}"</span>
+          Lagu Berawalan Huruf <span class="text-[#C27A65]">"{letter}"</span>
         </h1>
-        <span class="text-xs font-bold px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/70 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700/40 font-['Outfit']">
+        <span class="text-xs font-bold px-3 py-1 rounded-full bg-[#8A9A86]/15 text-[#4E614A] dark:text-[#A8B7A4] border border-[#8A9A86]/30 font-['Outfit']">
           {songs.length} Lagu
         </span>
       </div>
@@ -138,15 +138,15 @@ const formatViews = (num: any) => {
           return (
             <a
               href={`/lagu/${songSlug}`}
-              class="group flex items-center justify-between p-4 sm:p-5 rounded-2xl glass-panel hover:border-red-600/50 hover:-translate-y-0.5 transition-all duration-200 shadow-xs hover:shadow-md"
+              class="group flex items-center justify-between p-4 sm:p-5 rounded-2xl glass-panel hover:border-[#C27A65]/50 hover:-translate-y-0.5 transition-all duration-200 shadow-xs hover:shadow-md"
             >
               <!-- Sisi Kiri: Cover & Info Lagu -->
               <div class="flex items-center space-x-4 sm:space-x-5 min-w-0">
-                <div class="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-[var(--border-color)] flex items-center justify-center text-red-600 dark:text-red-500 font-bold text-xl group-hover:bg-red-600 group-hover:text-white transition-all font-['Outfit'] flex-shrink-0">
+                <div class="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-[var(--border-color)] flex items-center justify-center text-[#C27A65] font-bold text-xl group-hover:bg-[#C27A65] group-hover:text-white transition-all font-['Outfit'] flex-shrink-0">
                   🎵
                 </div>
                 <div class="truncate">
-                  <h2 class="text-base sm:text-lg font-bold text-[var(--text-main)] group-hover:text-red-600 dark:group-hover:text-red-400 font-['Outfit'] transition-colors truncate">
+                  <h2 class="text-base sm:text-lg font-bold text-[var(--text-main)] group-hover:text-[#C27A65] font-['Outfit'] transition-colors truncate">
                     {title}
                   </h2>
                   <p class="text-xs sm:text-sm text-[var(--text-muted)] font-medium mt-0.5 truncate">
@@ -160,7 +160,7 @@ const formatViews = (num: any) => {
                 <span class="text-xs text-[var(--text-muted)] group-hover:text-[var(--text-main)] font-medium">
                   👁️ {formatViews(views)} views
                 </span>
-                <span class="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-lg bg-red-50 dark:bg-red-950/70 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700/40 group-hover:bg-red-600 group-hover:text-white transition-all font-['Outfit']">
+                <span class="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-lg bg-[#C27A65]/10 text-[#C27A65] border border-[#C27A65]/25 group-hover:bg-[#C27A65] group-hover:text-white transition-all font-['Outfit']">
                   Buka Lirik →
                 </span>
               </div>
@@ -179,7 +179,7 @@ const formatViews = (num: any) => {
           <div class="pt-4">
             <a
               href="/indeks-lagu"
-              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold tracking-wide uppercase transition-all"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#C27A65] hover:bg-[#b06a56] text-white text-xs font-bold tracking-wide uppercase transition-all"
             >
               Lihat Abjad Lainnya
             </a>

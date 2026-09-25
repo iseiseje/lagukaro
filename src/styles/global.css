@@ -3,17 +3,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg-base: #f8f4e6;
-  --bg-surface: #ffffff;
-  --bg-elevated: #f0ead6;
-  --border-color: #e5dcce;
-  --border-hover: #d2c4b0;
-  --text-main: #3e2723;
-  --text-muted: #6d4c41;
+  /* Earthy & Natural (Paper Ivory, Deep Espresso, Soft Terracotta & Sage Green) */
+  --bg-base: #f8f4e6;          /* Paper Ivory */
+  --bg-surface: #ffffff;       /* Clean White Card */
+  --bg-elevated: #f0ead6;      /* Warm Ivory Hover */
+  --border-color: #e5dcce;     /* Earthy Border */
+  --border-hover: #c27a65;     /* Soft Terracotta Hover */
+  --text-main: #3e2723;        /* Deep Espresso */
+  --text-muted: #6d4c41;       /* Warm Espresso Muted */
   --text-subtle: #8d6e63;
-  --brand-red: #dc2626;
-  --brand-red-hover: #b91c1c;
-  --brand-terracotta: #c27a65;
+  --brand-primary: #c27a65;    /* Soft Terracotta */
+  --brand-primary-hover: #b06b56;
+  --brand-secondary: #8a9a86;  /* Sage Green */
+  --brand-secondary-dark: #4e5e4a;
   --header-bg: rgba(248, 244, 230, 0.95);
   --header-border: #e5dcce;
   --shadow-card: 0 1px 3px rgba(62, 39, 35, 0.06), 0 1px 2px rgba(62, 39, 35, 0.04);
@@ -21,20 +23,22 @@
 }
 
 .dark {
-  --bg-base: #09090b;
-  --bg-surface: #121215;
-  --bg-elevated: #1a1a20;
-  --border-color: rgba(255, 255, 255, 0.1);
-  --border-hover: rgba(239, 68, 68, 0.4);
-  --text-main: #f8fafc;
-  --text-muted: #a1a1aa;
-  --text-subtle: #71717a;
-  --brand-red: #ef4444;
-  --brand-red-hover: #dc2626;
-  --header-bg: rgba(13, 12, 16, 0.95);
-  --header-border: rgba(255, 255, 255, 0.1);
+  --bg-base: #181311;          /* Deep Roast Espresso */
+  --bg-surface: #221b18;       /* Warm Dark Espresso Card */
+  --bg-elevated: #2c221e;      /* Elevated Dark Card */
+  --border-color: rgba(248, 244, 230, 0.12);
+  --border-hover: rgba(212, 137, 116, 0.4);
+  --text-main: #f8f4e6;        /* Paper Ivory Text */
+  --text-muted: #c7bca9;       /* Soft Muted Ivory */
+  --text-subtle: #968a78;
+  --brand-primary: #d48974;    /* Terracotta for Dark Mode */
+  --brand-primary-hover: #c27a65;
+  --brand-secondary: #9fb19b;  /* Sage Green for Dark Mode */
+  --brand-secondary-dark: #c0cfbc;
+  --header-bg: rgba(24, 19, 17, 0.95);
+  --header-border: rgba(248, 244, 230, 0.1);
   --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(239, 68, 68, 0.12);
+  --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(212, 137, 116, 0.15);
 }
 
 @layer utilities {
@@ -54,7 +58,7 @@
     backface-visibility: hidden;
   }
 
-  /* Clean Solid Card (Replaces heavy glassmorphism) */
+  /* Clean Solid Card */
   .glass-panel,
   .card-panel {
     background: var(--bg-surface);
@@ -65,35 +69,35 @@
 
   .glass-panel:hover,
   .card-panel:hover {
-    border-color: var(--border-hover);
+    border-color: var(--brand-primary);
     box-shadow: var(--shadow-card-hover);
   }
 
-  /* Highlight/Glow Card for Rank 1 or Featured Content */
+  /* Highlight/Glow Card for Featured Content */
   .glass-panel-glow,
   .card-panel-featured {
     background: var(--bg-surface);
-    border: 1px solid rgba(220, 38, 38, 0.35);
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(194, 122, 101, 0.4);
+    box-shadow: 0 4px 15px rgba(194, 122, 101, 0.1);
     transition: all 0.2s ease-out;
   }
 
   .dark .glass-panel-glow,
   .dark .card-panel-featured {
-    border-color: rgba(239, 68, 68, 0.35);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(239, 68, 68, 0.08);
+    border-color: rgba(212, 137, 116, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 137, 116, 0.1);
   }
 
   .glass-panel-glow:hover,
   .card-panel-featured:hover {
-    border-color: var(--brand-red);
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+    border-color: var(--brand-primary);
+    box-shadow: 0 8px 25px rgba(194, 122, 101, 0.2);
   }
 
   .dark .glass-panel-glow:hover,
   .dark .card-panel-featured:hover {
-    border-color: var(--brand-red);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(239, 68, 68, 0.18);
+    border-color: var(--brand-primary);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 137, 116, 0.2);
   }
 }
 
@@ -106,12 +110,12 @@
   background: var(--bg-base);
 }
 ::-webkit-scrollbar-thumb {
-  background: #d6ccbe;
+  background: #d8cbb8;
   border-radius: 9999px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #3a2e28;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-red);
+  background: var(--brand-primary);
 }
