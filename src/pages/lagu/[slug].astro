@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SongComments from '../../components/SongComments.astro';
 import { getAllSongs, getSongBySlug } from '../../lib/strapi';
 
 export async function getStaticPaths() {
@@ -295,6 +296,9 @@ const combinedSchema = {
             </div>
           </div>
         )}
+
+        <!-- Komentar & Apresiasi Lagu (Strapi Comments Plugin) -->
+        <SongComments documentId={song?.documentId} songId={song?.id} songTitle={title} />
       </div>
 
       <!-- SISI KANAN: Player YouTube & Artis Info -->

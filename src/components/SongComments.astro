@@ -1,0 +1,349 @@
+---
+interface Props {
+  documentId?: string;
+  songId?: number | string;
+  songTitle?: string;
+}
+
+const { documentId, songId, songTitle = 'Lagu' } = Astro.props;
+const apiUrl = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
+---
+
+<div class="glass-panel rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm" id="comments-section">
+  <!-- Header Komentar -->
+  <div class="border-b border-[var(--border-color)] pb-4 flex items-center justify-between flex-wrap gap-2">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">💬</span>
+      <h2 class="text-lg sm:text-xl font-bold text-[var(--brand-primary)] font-['Outfit']">
+        Komentar & Apresiasi
+      </h2>
+    </div>
+    <span 
+      id="comments-count-badge" 
+      class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] border border-[var(--brand-primary)]/25 font-['Outfit']"
+    >
+      Memuat...
+    </span>
+  </div>
+
+  <!-- Form Kirim Komentar -->
+  <form id="comment-form" class="space-y-4 p-4 sm:p-5 rounded-xl bg-neutral-50 dark:bg-white/[0.02] border border-[var(--border-color)]">
+    <h3 class="text-sm font-bold text-[var(--text-main)] font-['Outfit'] flex items-center gap-2">
+      <span>✍️</span> Tulis Komentar untuk "{songTitle}"
+    </h3>
+
+    <!-- Notifikasi Alert Status -->
+    <div id="comment-alert" class="hidden p-3 rounded-lg text-xs leading-relaxed font-medium"></div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      <div>
+        <label for="comment-author-name" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">
+          Nama Lengkap / Panggilan <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="comment-author-name"
+          name="name"
+          required
+          placeholder="Misal: Bre Karo / Gita"
+          class="w-full px-3.5 py-2 text-xs sm:text-sm rounded-lg bg-white dark:bg-neutral-900 border border-[var(--border-color)] text-[var(--text-main)] placeholder:text-[var(--text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40 transition-all"
+        />
+      </div>
+
+      <div>
+        <label for="comment-author-email" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">
+          Email <span class="text-[var(--text-muted)] font-normal text-[11px]">(opsional, tidak dipublikasikan)</span>
+        </label>
+        <input
+          type="email"
+          id="comment-author-email"
+          name="email"
+          placeholder="nama@email.com"
+          class="w-full px-3.5 py-2 text-xs sm:text-sm rounded-lg bg-white dark:bg-neutral-900 border border-[var(--border-color)] text-[var(--text-main)] placeholder:text-[var(--text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40 transition-all"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="comment-content" class="block text-xs font-semibold text-[var(--text-muted)] mb-1">
+        Isi Komentar <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        id="comment-content"
+        name="content"
+        rows="3"
+        required
+        placeholder="Tulis kesan, makna lagu bagi Anda, atau cerita terkait lagu ini..."
+        class="w-full px-3.5 py-2 text-xs sm:text-sm rounded-lg bg-white dark:bg-neutral-900 border border-[var(--border-color)] text-[var(--text-main)] placeholder:text-[var(--text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40 transition-all resize-y min-h-[80px]"
+      ></textarea>
+    </div>
+
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        id="comment-submit-btn"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--brand-primary)] text-white hover:opacity-90 active:scale-95 transition-all text-xs sm:text-sm font-bold font-['Outfit'] shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span id="submit-btn-spinner" class="hidden animate-spin">⏳</span>
+        <span id="submit-btn-text">Kirim Komentar</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Daftar Komentar -->
+  <div class="space-y-4">
+    <!-- Skeleton Loading -->
+    <div id="comments-loading" class="space-y-3">
+      <div class="animate-pulse p-4 rounded-xl bg-neutral-100 dark:bg-white/[0.02] border border-[var(--border-color)] space-y-2.5">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-neutral-300 dark:bg-neutral-700"></div>
+          <div class="space-y-1.5 flex-1">
+            <div class="h-3 w-28 bg-neutral-300 dark:bg-neutral-700 rounded"></div>
+            <div class="h-2 w-16 bg-neutral-200 dark:bg-neutral-800 rounded"></div>
+          </div>
+        </div>
+        <div class="h-3 w-3/4 bg-neutral-200 dark:bg-neutral-800 rounded pt-2"></div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="comments-empty" class="hidden text-center py-8 px-4 rounded-xl border border-dashed border-[var(--border-color)] space-y-2">
+      <div class="text-3xl">💬</div>
+      <p class="text-sm font-bold text-[var(--text-main)] font-['Outfit']">Belum ada komentar</p>
+      <p class="text-xs text-[var(--text-muted)] max-w-sm mx-auto">
+        Jadilah yang pertama menuliskan apresiasi, kenangan, atau kesan Anda mengenai lagu ini!
+      </p>
+    </div>
+
+    <!-- Container List Komentar Real -->
+    <div id="comments-list" class="space-y-3.5"></div>
+  </div>
+</div>
+
+<script define:vars={{ docId: documentId, sId: songId, apiUrl }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const listContainer = document.getElementById('comments-list');
+    const loadingEl = document.getElementById('comments-loading');
+    const emptyEl = document.getElementById('comments-empty');
+    const countBadge = document.getElementById('comments-count-badge');
+    const form = document.getElementById('comment-form');
+    const alertBox = document.getElementById('comment-alert');
+    const submitBtn = document.getElementById('comment-submit-btn');
+    const btnSpinner = document.getElementById('submit-btn-spinner');
+    const btnText = document.getElementById('submit-btn-text');
+
+    // Identifikasi relasi Strapi v5: api::lagu.lagu:<documentId> (fallback ke ID numerik jika diperlukan)
+    const targetRelation = docId 
+      ? `api::lagu.lagu:${docId}` 
+      : (sId ? `api::lagu.lagu:${sId}` : null);
+
+    if (!targetRelation) {
+      if (loadingEl) loadingEl.classList.add('hidden');
+      if (emptyEl) {
+        emptyEl.classList.remove('hidden');
+        emptyEl.querySelector('p').textContent = 'Relasi lagu tidak ditemukan.';
+      }
+      return;
+    }
+
+    // Helper formatting tanggal lokal Indonesia
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      try {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).format(date);
+      } catch (e) {
+        return dateString;
+      }
+    };
+
+    // Helper sanitasi teks XSS
+    const escapeHtml = (unsafe) => {
+      if (!unsafe) return '';
+      return unsafe
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+
+    // Fetch komentar dari Strapi Comments Plugin: GET /api/comments/:relation/flat
+    async function loadComments() {
+      try {
+        const url = `${apiUrl}/api/comments/${encodeURIComponent(targetRelation)}/flat?pagination[pageSize]=100&sort=createdAt:desc`;
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const json = await res.json();
+        const comments = json.data || [];
+
+        renderComments(comments);
+      } catch (err) {
+        console.error('Gagal memuat komentar:', err);
+        if (loadingEl) loadingEl.classList.add('hidden');
+        if (countBadge) countBadge.textContent = '0 Komentar';
+        if (emptyEl) {
+          emptyEl.classList.remove('hidden');
+          emptyEl.innerHTML = `
+            <div class="text-2xl">⚠️</div>
+            <p class="text-xs text-[var(--text-muted)]">Komentar belum dapat dimuat saat ini.</p>
+          `;
+        }
+      }
+    }
+
+    // Render daftar komentar ke DOM
+    function renderComments(comments) {
+      if (loadingEl) loadingEl.classList.add('hidden');
+
+      if (countBadge) {
+        countBadge.textContent = `${comments.length} Komentar`;
+      }
+
+      if (!comments || comments.length === 0) {
+        if (emptyEl) emptyEl.classList.remove('hidden');
+        if (listContainer) listContainer.innerHTML = '';
+        return;
+      }
+
+      if (emptyEl) emptyEl.classList.add('hidden');
+
+      if (listContainer) {
+        listContainer.innerHTML = comments.map(c => {
+          // Author bisa dari `c.author` (objek anonymous) atau `c.authorUser` (strapi user)
+          const authorName = c.author?.name || c.authorUser?.username || 'Pengunjung';
+          const initial = (authorName.trim()[0] || 'K').toUpperCase();
+          const dateStr = formatDate(c.createdAt);
+          const safeContent = escapeHtml(c.content || '').replace(/\n/g, '<br/>');
+
+          return `
+            <div class="p-4 rounded-xl bg-white dark:bg-neutral-900 border border-[var(--border-color)] shadow-xs space-y-2.5 transition-all hover:border-[var(--brand-primary)]/40">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-8 h-8 rounded-full bg-[var(--brand-primary)] text-white flex items-center justify-center text-xs font-bold font-['Outfit'] flex-shrink-0 shadow-xs">
+                    ${initial}
+                  </div>
+                  <div class="min-w-0">
+                    <span class="block text-xs sm:text-sm font-bold text-[var(--text-main)] font-['Outfit'] truncate">
+                      ${escapeHtml(authorName)}
+                    </span>
+                    <span class="block text-[11px] text-[var(--text-muted)]">
+                      ${dateStr}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs sm:text-sm text-[var(--text-main)] leading-relaxed font-normal pt-1 break-words">
+                ${safeContent}
+              </p>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // Tampilkan notifikasi
+    function showAlert(type, message) {
+      if (!alertBox) return;
+      alertBox.className = `p-3.5 rounded-lg text-xs leading-relaxed font-medium ${
+        type === 'success' 
+          ? 'bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20' 
+          : 'bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20'
+      }`;
+      alertBox.innerHTML = message;
+      alertBox.classList.remove('hidden');
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Handle pengiriman form komentar
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const nameInput = document.getElementById('comment-author-name');
+        const emailInput = document.getElementById('comment-author-email');
+        const contentInput = document.getElementById('comment-content');
+
+        const name = nameInput ? nameInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+        const content = contentInput ? contentInput.value.trim() : '';
+
+        if (!name || !content) {
+          showAlert('error', 'Nama dan isi komentar wajib diisi.');
+          return;
+        }
+
+        // State loading tombol
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnSpinner) btnSpinner.classList.remove('hidden');
+        if (btnText) btnText.textContent = 'Mengirim...';
+        if (alertBox) alertBox.classList.add('hidden');
+
+        try {
+          const postUrl = `${apiUrl}/api/comments/${encodeURIComponent(targetRelation)}`;
+          const payload = {
+            content: content,
+            author: {
+              id: email || Date.now().toString(),
+              name: name,
+              email: email || undefined
+            }
+          };
+
+          const res = await fetch(postUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (!res.ok) {
+            let errorMsg = 'Gagal mengirim komentar.';
+            try {
+              const errJson = await res.json();
+              if (errJson?.error?.message) {
+                errorMsg += ` (${errJson.error.message})`;
+              }
+            } catch (_) {}
+
+            if (res.status === 403 || res.status === 401) {
+              errorMsg = 'Izin pengiriman komentar belum diaktifkan di admin Strapi (Role Public > Comments > create/postComment).';
+            } else if (res.status === 500) {
+              errorMsg = 'Server merespons error (500). Mohon pastikan fitur komentar anonim (unauthenticated) telah diaktifkan pada konfigurasi plugin comments di Strapi Anda.';
+            }
+
+            showAlert('error', errorMsg);
+          } else {
+            // Berhasil
+            showAlert('success', '🎉 Terima kasih! Komentar Anda berhasil dikirim. Jika sistem moderasi Strapi aktif, komentar akan tampil setelah disetujui admin.');
+            if (contentInput) contentInput.value = '';
+            
+            // Muat ulang daftar komentar
+            loadComments();
+          }
+        } catch (err) {
+          console.error('Error kirim komentar:', err);
+          showAlert('error', 'Terjadi kesalahan koneksi saat mengirim komentar. Silakan coba lagi.');
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+          if (btnSpinner) btnSpinner.classList.add('hidden');
+          if (btnText) btnText.textContent = 'Kirim Komentar';
+        }
+      });
+    }
+
+    // Inisialisasi awal
+    loadComments();
+  });
+</script>
