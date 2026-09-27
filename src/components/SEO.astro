@@ -1,0 +1,59 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonicalUrl?: string;
+  preventIndexing?: boolean;
+  type?: 'website' | 'music.song';
+  schema?: Record<string, any>;
+}
+
+const {
+  title = 'Lagu Karo - Kumpulan Lirik dan Lagu Tradisional Karo Terlengkap',
+  description = 'Portal lirik, chord, dan makna lagu daerah Karo terlengkap.',
+  image = '/default-og.jpg',
+  canonicalUrl = Astro.url.href,
+  preventIndexing = false,
+  type = 'website',
+  schema,
+} = Astro.props;
+
+const siteUrl = Astro.site ? Astro.site.origin : (import.meta.env.PUBLIC_SITE_URL || 'https://lagukaro.id');
+const fullImageUrl = image.startsWith('http') ? image : `${siteUrl}${image.startsWith('/') ? '' : '/'}${image}`;
+---
+
+<!-- Standar Meta Tags -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Pengendali Indexing Googlebot -->
+{
+  preventIndexing ? (
+    <meta name="robots" content="noindex, nofollow" />
+  ) : (
+    <meta name="robots" content="index, follow" />
+  )
+}
+
+<!-- Open Graph / Facebook / WhatsApp -->
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={fullImageUrl} />
+<meta property="og:site_name" content="LaguKaro.id" />
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={fullImageUrl} />
+
+<!-- Structured Data (JSON-LD) untuk Google Rich Snippets -->
+{
+  schema && (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  )
+}

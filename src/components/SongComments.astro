@@ -177,7 +177,14 @@ const apiUrl = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
     // Fetch komentar dari Strapi Comments Plugin: GET /api/comments/:relation/flat
     async function loadComments() {
       try {
-        const url = `${apiUrl}/api/comments/${encodeURIComponent(targetRelation)}/flat?pagination[pageSize]=100&sort=createdAt:desc`;
+        // Query filter: hanya ambil komentar yang disetujui (APPROVED) dan tidak diblokir (blocked=false)
+        const params = new URLSearchParams({
+          'pagination[pageSize]': '100',
+          'sort': 'createdAt:desc',
+          'filters[approvalStatus][$eq]': 'APPROVED',
+          'filters[blocked][$eq]': 'false'
+        });
+        const url = `${apiUrl}/api/comments/${encodeURIComponent(targetRelation)}/flat?${params.toString()}`;
         const res = await fetch(url);
 
         if (!res.ok) {
@@ -185,7 +192,14 @@ const apiUrl = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
         }
 
         const json = await res.json();
-        const comments = json.data || [];
+        const rawComments = json.data || [];
+
+        // Proteksi ganda di sisi client: pastikan komentar berstatus REJECTED, PENDING, atau diblokir tidak tampil
+        const comments = rawComments.filter(c => {
+          const isApproved = c.approvalStatus ? c.approvalStatus === 'APPROVED' : true;
+          const isNotBlocked = !c.blocked && !c.blockedThread && !c.removed;
+          return isApproved && isNotBlocked;
+        });
 
         renderComments(comments);
       } catch (err) {

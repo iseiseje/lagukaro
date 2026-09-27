@@ -1,31 +1,27 @@
 ---
 import '../styles/global.css';
 import PengeretRetFullWidth from '../components/PengeretRetFullWidth.astro';
+import SEO from '../components/SEO.astro';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   image?: string;
   canonicalUrl?: string;
+  preventIndexing?: boolean;
   type?: 'website' | 'article' | 'music.song';
+  schema?: Record<string, any>;
 }
 
 const { 
   title, 
-  description = "Pustaka lirik lagu daerah Karo terlengkap, terjemahan bahasa Indonesia, makna, dan chord gitar.",
-  image = "/og-image.jpg",
+  description,
+  image,
   canonicalUrl,
-  type = "website"
+  preventIndexing = false,
+  type = "website",
+  schema
 } = Astro.props;
-
-const SITE_URL = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString().replace(/\/$/, '') || 'https://lagukaro.id';
-const resolvedCanonical = canonicalUrl 
-  ? (canonicalUrl.startsWith('http') ? canonicalUrl : `${SITE_URL}${canonicalUrl.startsWith('/') ? '' : '/'}${canonicalUrl}`)
-  : `${SITE_URL}${Astro.url.pathname}`;
-
-const resolvedImage = image.startsWith('http') 
-  ? image 
-  : `${SITE_URL}${image.startsWith('/') ? '' : '/'}${image}`;
 ---
 
 <!doctype html>
@@ -33,28 +29,20 @@ const resolvedImage = image.startsWith('http')
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | Gendang Karo</title>
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href={resolvedCanonical} />
-
-    <!-- Open Graph / Facebook / WhatsApp (SMO) -->
-    <meta property="og:site_name" content="Gendang Karo" />
-    <meta property="og:type" content={type} />
-    <meta property="og:url" content={resolvedCanonical} />
-    <meta property="og:title" content={`${title} | Gendang Karo`} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={resolvedImage} />
-    <meta property="og:locale" content="id_ID" />
-
-    <!-- Twitter Card (SMO) -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={resolvedCanonical} />
-    <meta name="twitter:title" content={`${title} | Gendang Karo`} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={resolvedImage} />
+    <!-- Universal SEO Component (dapat di-override via slot="seo") -->
+    <slot name="seo">
+      <SEO
+        title={title}
+        description={description}
+        image={image}
+        canonicalUrl={canonicalUrl}
+        preventIndexing={preventIndexing}
+        type={type === 'music.song' ? 'music.song' : 'website'}
+        schema={schema}
+      />
+    </slot>
     
     <!-- Google Fonts: Lora, Outfit & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

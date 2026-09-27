@@ -4,21 +4,18 @@ import SearchBar from '../components/SearchBar.astro';
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL || 'https://api.lagukaro.id';
 
-const pageParam = Astro.url.searchParams.get('page') || '1';
-
 let songs: any[] = [];
-let pagination = { page: 1, pageCount: 1 };
 
 try {
-  const res = await fetch(`${STRAPI_URL}/api/lagus?populate=*&pagination[pageSize]=50&pagination[page]=${pageParam}`);
+  // Ambil langsung Top 10 lagu trending dengan views tertinggi dari seluruh database Strapi
+  const res = await fetch(`${STRAPI_URL}/api/lagus?sort[0]=views:desc&sort[1]=id:desc&populate=*&pagination[pageSize]=10`);
   if (!res.ok) {
     throw new Error(`API error: ${res.status} ${res.statusText}`);
   }
   const data = await res.json();
   songs = data.data || [];
-  pagination = data.meta?.pagination || { page: 1, pageCount: 1 };
 } catch (error) {
-  console.error("Gagal mengambil data lagu dari Strapi API:", error);
+  console.error("Gagal mengambil data lagu trending dari Strapi API:", error);
 }
 
 // Helper ekstraksi nama penyanyi (Mendukung Many-to-Many penyanyis & fallback singular)
@@ -36,9 +33,6 @@ const getArtistNames = (song: any): string => {
 songs.forEach(song => {
   song.views = Number(song.views) || 0;
 });
-
-// Sortir manual di JavaScript agar aman meski views bernilai null/0
-songs.sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
 
 // Format tampilan angka views
 const formatViews = (num: any) => {

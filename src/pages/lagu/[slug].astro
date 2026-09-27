@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SEO from '../../components/SEO.astro';
 import SongComments from '../../components/SongComments.astro';
 import { getAllSongs, getSongBySlug } from '../../lib/strapi';
 
@@ -97,84 +98,67 @@ const ogImage = customCover
   ? (customCover.startsWith('http') ? customCover : `${STRAPI_URL}${customCover}`)
   : (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : `${SITE_URL}/og-image.jpg`);
 
-const metaDescription = `Lirik lagu daerah Karo ${title} dipopulerkan oleh ${artistNames}. Dilengkapi terjemahan bahasa Indonesia, makna lagu, fakta menarik, dan tanya jawab (FAQ).`;
+// 1. Fallback Meta Title & Description (SEO Pintar)
+const defaultDesc = `Lirik dan makna lagu daerah Karo ${title} dipopulerkan oleh ${artistNames}. Dilengkapi terjemahan bahasa Indonesia, chord, dan informasi lengkapnya.`;
+const seoTitle = song?.seo?.metaTitle || `Lirik Lagu ${title} - LaguKaro.id`;
+const seoDesc = song?.seo?.metaDescription || defaultDesc;
+const seoImage = song?.seo?.metaImage?.url
+  ? (song.seo.metaImage.url.startsWith('http') ? song.seo.metaImage.url : `${STRAPI_URL}${song.seo.metaImage.url}`)
+  : ogImage;
+const isPreventIndex = song?.seo?.preventIndexing ?? false;
 
-// Schema Markup Terpadu (@graph: MusicRecording & FAQPage untuk Google & GEO)
-const schemaGraph: any[] = [
-  {
-    "@type": "MusicRecording",
-    "@id": `${canonicalUrl}#recording`,
-    "url": canonicalUrl,
-    "name": title,
-    "inLanguage": "btx", // Bahasa Batak Karo (ISO 639-3)
-    "byArtist": artistList.length > 0
-      ? artistList.map((p: any) => ({
-          "@type": "MusicGroup",
-          "name": p.name || artistNames
-        }))
-      : {
-          "@type": "MusicGroup",
-          "name": artistNames
-        },
-    ...(creatorName ? {
-      "recordingOf": {
-        "@type": "MusicComposition",
-        "name": title,
-        "composer": {
-          "@type": "Person",
-          "name": creatorName
-        },
-        "lyricist": {
-          "@type": "Person",
-          "name": creatorName
-        },
-        "inLanguage": "btx"
-      }
-    } : {}),
-    ...(videoId ? {
-      "video": {
-        "@type": "VideoObject",
-        "name": `Video Klip ${title} - ${artistName}`,
-        "embedUrl": `https://www.youtube-nocookie.com/embed/${videoId}`,
-        "thumbnailUrl": ogImage,
-        "uploadDate": song?.createdAt || "2024-01-01T00:00:00Z"
-      }
-    } : {}),
-    "image": ogImage,
-    "description": metaDescription
-  }
-];
-
-if (song?.faqs && Array.isArray(song.faqs) && song.faqs.length > 0) {
-  schemaGraph.push({
-    "@type": "FAQPage",
-    "@id": `${canonicalUrl}#faq`,
-    "mainEntity": song.faqs.map((item: any) => ({
-      "@type": "Question",
-      "name": item.question || item.pertanyaan || '',
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer || item.jawaban || ''
-      }
-    }))
-  });
-}
-
-const combinedSchema = {
+// 2. Schema.org khusus MusicRecording (dengan integrasi FAQPage jika tersedia)
+const songSchema: Record<string, any> = {
   "@context": "https://schema.org",
-  "@graph": schemaGraph
+  "@type": "MusicRecording",
+  "name": title,
+  "byArtist": artistList.length > 0
+    ? artistList.map((p: any) => ({
+        "@type": "Person",
+        "name": p.name || p.nama || artistNames
+      }))
+    : [{ "@type": "Person", "name": artistNames }],
+  "composer": {
+    "@type": "Person",
+    "name": creatorName || "Unknown"
+  },
+  "inLanguage": "btx" // Kode bahasa Karo (Batak Karo)
 };
+
+const finalSchema = (song?.faqs && Array.isArray(song.faqs) && song.faqs.length > 0)
+  ? {
+      "@context": "https://schema.org",
+      "@graph": [
+        songSchema,
+        {
+          "@type": "FAQPage",
+          "@id": `${canonicalUrl}#faq`,
+          "mainEntity": song.faqs.map((item: any) => ({
+            "@type": "Question",
+            "name": item.question || item.pertanyaan || '',
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": item.answer || item.jawaban || ''
+            }
+          }))
+        }
+      ]
+    }
+  : songSchema;
 ---
 
-<Layout 
-  title={`${title} - Lirik & Terjemahan Karo`} 
-  description={metaDescription}
-  canonicalUrl={canonicalUrl}
-  image={ogImage}
-  type="music.song"
->
-  <!-- Inject JSON-LD Schema Terpadu (@graph) ke <head> -->
-  <script type="application/ld+json" slot="head" set:html={JSON.stringify(combinedSchema)} />
+<Layout>
+  <!-- Komponen SEO Universal -->
+  <SEO
+    slot="seo"
+    title={seoTitle}
+    description={seoDesc}
+    image={seoImage}
+    canonicalUrl={canonicalUrl}
+    type="music.song"
+    preventIndexing={isPreventIndex}
+    schema={finalSchema}
+  />
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-8">
     <!-- BREADCRUMBS & HEADER -->
