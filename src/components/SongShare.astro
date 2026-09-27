@@ -1,0 +1,137 @@
+---
+import {
+  SocialShare,
+  WhatsAppShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+  ThreadsShareButton
+} from 'astro-social-share';
+
+interface Props {
+  url?: string;
+  title?: string;
+  description?: string;
+}
+
+const {
+  url = Astro.url.href,
+  title = 'Lagu Karo',
+  description = 'Lirik dan chord lagu Karo terlengkap'
+} = Astro.props;
+
+const shareButtons = [
+  WhatsAppShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+  ThreadsShareButton
+];
+---
+
+<div class="social-share-card glass-panel rounded-2xl p-5 space-y-3 shadow-xs">
+  <div class="flex items-center justify-between">
+    <h3 class="text-xs uppercase font-bold text-[var(--brand-primary)] font-['Outfit'] tracking-wider flex items-center gap-1.5">
+      <span>📢</span> Bagikan Lagu & Lirik
+    </h3>
+    <span class="text-[11px] text-[var(--text-muted)] font-medium">Bantu lestarikan budaya</span>
+  </div>
+  
+  <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+    Suka dengan lirik atau lagu ini? Bagikan kepada teman, keluarga, dan media sosial Anda:
+  </p>
+
+  <div class="pt-1 flex items-center flex-wrap gap-2.5 social-share-container">
+    <div class="custom-social-share">
+      <SocialShare
+        buttons={shareButtons}
+        url={url}
+        title={title}
+        description={description}
+      />
+    </div>
+
+    <!-- Tombol Salin Tautan (Copy Link) -->
+    <button
+      id="copyShareLinkBtn"
+      type="button"
+      data-url={url}
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-neutral-100 dark:bg-white/[0.04] border border-[var(--border-color)] text-[var(--text-main)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] hover:-translate-y-0.5 transition-all cursor-pointer shadow-xs"
+      title="Salin tautan ke clipboard"
+    >
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+      </svg>
+      <span id="copyShareLinkText">Salin Link</span>
+    </button>
+  </div>
+</div>
+
+<style is:global>
+  .custom-social-share .astro-social-share {
+    margin: 0 !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+  .custom-social-share .astro-social-share a {
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    background-color: var(--bg-surface, rgba(255, 255, 255, 0.04)) !important;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1)) !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+  }
+  .custom-social-share .astro-social-share a:hover {
+    transform: translateY(-2px) !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15) !important;
+  }
+  .custom-social-share .astro-social-share svg {
+    width: 17px !important;
+    height: 17px !important;
+    fill: var(--text-muted) !important;
+    transition: fill 0.2s ease !important;
+  }
+  .custom-social-share .astro-social-share a:hover svg {
+    fill: var(--brand-primary) !important;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyBtn = document.getElementById('copyShareLinkBtn');
+    const copyText = document.getElementById('copyShareLinkText');
+
+    if (copyBtn && copyText) {
+      copyBtn.addEventListener('click', async () => {
+        const shareUrl = copyBtn.getAttribute('data-url') || window.location.href;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(shareUrl);
+          } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = shareUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+          }
+          copyText.textContent = 'Tersalin! ✓';
+          copyBtn.classList.add('border-green-500', 'text-green-600', 'dark:text-green-400');
+          setTimeout(() => {
+            copyText.textContent = 'Salin Link';
+            copyBtn.classList.remove('border-green-500', 'text-green-600', 'dark:text-green-400');
+          }, 2500);
+        } catch (err) {
+          console.error('Gagal menyalin:', err);
+        }
+      });
+    }
+  });
+</script>

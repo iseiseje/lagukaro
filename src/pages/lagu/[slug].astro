@@ -2,6 +2,14 @@
 import Layout from '../../layouts/Layout.astro';
 import SEO from '../../components/SEO.astro';
 import SongComments from '../../components/SongComments.astro';
+import SongShare from '../../components/SongShare.astro';
+import {
+  SocialShare,
+  WhatsAppShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+  ThreadsShareButton
+} from 'astro-social-share';
 import { getAllSongs, getSongBySlug } from '../../lib/strapi';
 
 export async function getStaticPaths() {
@@ -192,6 +200,24 @@ const finalSchema = (song?.faqs && Array.isArray(song.faqs) && song.faqs.length 
           <span id="view-counter" class="text-[var(--text-main)] font-semibold">{song?.views ?? 0}</span>
           <span>kali dilihat</span>
         </div>
+
+        <!-- Tombol Bagikan Cepat (Social Share) -->
+        <div class="custom-social-share inline-flex items-center gap-1.5 pl-1 sm:border-l sm:border-[var(--border-color)] sm:pl-3 flex-wrap">
+          <span class="text-xs text-[var(--text-muted)] font-medium mr-1 flex items-center gap-1">
+            <span>📢</span> Bagikan:
+          </span>
+          <SocialShare
+            buttons={[
+              WhatsAppShareButton,
+              FacebookShareButton,
+              TwitterShareButton,
+              ThreadsShareButton
+            ]}
+            url={canonicalUrl}
+            title={seoTitle}
+            description={seoDesc}
+          />
+        </div>
       </div>
     </div>
 
@@ -305,6 +331,13 @@ const finalSchema = (song?.faqs && Array.isArray(song.faqs) && song.faqs.length 
               </div>
             </div>
           )}
+
+          <!-- Kartu Bagikan Lagu & Lirik (Social Share Lengkap) -->
+          <SongShare
+            url={canonicalUrl}
+            title={seoTitle}
+            description={seoDesc}
+          />
 
           {artistList.length > 0 && (
             <div class="space-y-4">
